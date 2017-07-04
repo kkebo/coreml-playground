@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<playground requires-full-environment="false" version="6.0" target-platform="ios">
+    <pages>
+        <page name="Image Detection"/>
+        <page name="Camera Detection"/>
+    </pages>
+</playground>
