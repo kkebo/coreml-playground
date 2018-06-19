@@ -1,8 +1,10 @@
 # coreml-playgrounds
-CoreML examples for Swift Playgrounds 2
+CoreML examples for Swift Playgrounds 2 or later
 
 ## Getting Started
-1. Download `Inceptionv3.mlmodel` from [the Apple Developer site](https://developer.apple.com/machine-learning/)
-1. Compile it to `Inceptionv3.mlmodelc` with Xcode 9
-1. Copy it to `CoreML.playground/Pages/Camera Detection.xcplaygroundpage/Resources` and `CoreML.playground/Pages/Image Detection.xcplaygroundpage/Resources`
-1. Open `CoreML.playground` in Swift Playgrounds 2 or later
+1. Download `MobileNet.mlmodel` from [the Apple Developer website](https://developer.apple.com/machine-learning/) and save it into Files app
+1. Open `CoreML.playground` in Swift Playgrounds on your iPad
+1. Tap the '+' button on the right side of the navigation bar
+1. Tap the file icon and then tap the 'Insert From...' button
+1. Select a downloaded `MobileNet.mlmodel`
+1. Run the code

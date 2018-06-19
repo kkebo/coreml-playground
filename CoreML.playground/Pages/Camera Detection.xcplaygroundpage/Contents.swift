@@ -111,9 +111,10 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
     
     private func setupCoreML() {
-        guard let mlmodelcFile = Bundle.main.url(forResource: "Inceptionv3", withExtension: "mlmodelc") else { fatalError() }
+        guard let modelUrl = Bundle.main.url(forResource: "MobileNet", withExtension: "mlmodel") else { fatalError() }
         do {
-            let model = try VNCoreMLModel(for: try MLModel(contentsOf: mlmodelcFile))
+            let compiledUrl = try MLModel.compileModel(at: modelUrl)
+            let model = try VNCoreMLModel(for: try MLModel(contentsOf: compiledUrl))
             self.request = VNCoreMLRequest(model: model) { request, error in
                 guard let observations = request.results as? [VNClassificationObservation] else { fatalError() }
                 if let best = observations.first {

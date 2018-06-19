@@ -14,8 +14,9 @@ stackView.axis = .vertical
 PlaygroundPage.current.liveView = stackView
 
 // Object Detection
-guard let mlmodelcFile = Bundle.main.url(forResource: "Inceptionv3", withExtension: "mlmodelc") else { fatalError() }
-let model = try VNCoreMLModel(for: try MLModel(contentsOf: mlmodelcFile))
+guard let modelUrl = Bundle.main.url(forResource: "MobileNet", withExtension: "mlmodel") else { fatalError() }
+let compiledUrl = try MLModel.compileModel(at: modelUrl)
+let model = try VNCoreMLModel(for: try MLModel(contentsOf: compiledUrl))
 let coremlRequest = VNCoreMLRequest(model: model) { request, error in
     guard let observations = request.results as? [VNClassificationObservation] else { fatalError() }
     observations.filter { $0.confidence >= threshold }.forEach {
