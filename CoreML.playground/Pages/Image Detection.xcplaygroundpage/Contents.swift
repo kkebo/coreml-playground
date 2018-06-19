@@ -13,7 +13,7 @@ let stackView = UIStackView(arrangedSubviews: [imageView])
 stackView.axis = .vertical
 PlaygroundPage.current.liveView = stackView
 
-// Object Detection
+// Object Recognition
 guard let modelUrl = Bundle.main.url(forResource: "MobileNet", withExtension: "mlmodel") else { fatalError() }
 let compiledUrl = try MLModel.compileModel(at: modelUrl)
 let model = try VNCoreMLModel(for: try MLModel(contentsOf: compiledUrl))

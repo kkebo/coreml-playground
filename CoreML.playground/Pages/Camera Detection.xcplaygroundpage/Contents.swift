@@ -129,7 +129,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
     
     private func detect(image: UIImage) {
-        // Object Detection
+        // Object Recognition
         do {
             guard let ciImage = CIImage(image: image) else { fatalError() }
             try VNImageRequestHandler(ciImage: ciImage).perform([self.request])
