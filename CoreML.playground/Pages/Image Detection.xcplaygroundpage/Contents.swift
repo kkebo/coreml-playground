@@ -14,7 +14,7 @@ stackView.axis = .vertical
 PlaygroundPage.current.liveView = stackView
 
 // Object Recognition
-guard let modelUrl = Bundle.main.url(forResource: "MobileNet", withExtension: "mlmodel") else { fatalError() }
+let modelUrl = #fileLiteral(resourceName: "MobileNet.mlmodel")
 let compiledUrl = try MLModel.compileModel(at: modelUrl)
 let model = try VNCoreMLModel(for: try MLModel(contentsOf: compiledUrl))
 let coremlRequest = VNCoreMLRequest(model: model) { request, error in

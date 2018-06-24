@@ -111,7 +111,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
     
     private func setupCoreML() {
-        guard let modelUrl = Bundle.main.url(forResource: "MobileNet", withExtension: "mlmodel") else { fatalError() }
+        let modelUrl = #fileLiteral(resourceName: "MobileNet.mlmodel")
         do {
             let compiledUrl = try MLModel.compileModel(at: modelUrl)
             let model = try VNCoreMLModel(for: try MLModel(contentsOf: compiledUrl))
