@@ -155,7 +155,7 @@ func configureDevice(device: AVCaptureDevice) -> Result<(), ConfigureDeviceError
     var bestFrameRateRange: AVFrameRateRange? = nil
     for format in device.formats {
         for range in format.videoSupportedFrameRateRanges {
-            if bestFrameRateRange == nil || range.maxFrameRate > bestFrameRateRange!.maxFrameRate {
+            if range.maxFrameRate > bestFrameRateRange?.maxFrameRate ?? -Float64.greatestFiniteMagnitude {
                 bestFormat = format
                 bestFrameRateRange = range
             }
@@ -167,7 +167,7 @@ func configureDevice(device: AVCaptureDevice) -> Result<(), ConfigureDeviceError
     }
     
     let lock = Result { try device.lockForConfiguration() }
-    guard case let .success(_) = lock else {
+    guard case .success = lock else {
         return .failure(.deviceLockFailed)
     }
     
@@ -182,6 +182,7 @@ func configureDevice(device: AVCaptureDevice) -> Result<(), ConfigureDeviceError
 enum GetImageError: Error {
     case getBaseAddressFailed
     case createContextFailed
+    case craeteCGImageFailed
 }
 
 func getImage(from imageBuffer: CVImageBuffer) -> Result<UIImage, GetImageError> {
@@ -209,13 +210,16 @@ func getImage(from imageBuffer: CVImageBuffer) -> Result<UIImage, GetImageError>
             return .failure(.createContextFailed)
     }
     
-    let imageRef = newContext.makeImage()!
-    let resultImage = UIImage(cgImage: imageRef, scale: 1.0, orientation: .right)
+    guard let imageRef = newContext.makeImage() else {
+        return .failure(.createCGImageFailed)
+    }
+    let resultImage = UIImage(cgImage: imageRef)
     
     CVPixelBufferUnlockBaseAddress(imageBuffer, CVPixelBufferLockFlags(rawValue: 0))
     
     return .success(resultImage)
 }
 
+PlaygroundPage.current.wantsFullScreenLiveView = true
 PlaygroundPage.current.liveView = ViewController()
 
