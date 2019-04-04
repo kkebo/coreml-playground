@@ -180,42 +180,16 @@ func configureDevice(device: AVCaptureDevice) -> Result<(), ConfigureDeviceError
 }
 
 enum GetImageError: Error {
-    case getBaseAddressFailed
-    case createContextFailed
-    case craeteCGImageFailed
+    case createCGImageFailed
 }
 
 func getImage(from imageBuffer: CVImageBuffer) -> Result<UIImage, GetImageError> {
-    CVPixelBufferLockBaseAddress(imageBuffer, CVPixelBufferLockFlags(rawValue: 0))
-    
-    guard let baseAddress = CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 0) else {
-        return .failure(.getBaseAddressFailed)
-    }
-    
-    let bytesPerRow = CVPixelBufferGetBytesPerRow(imageBuffer)
-    let width = CVPixelBufferGetWidth(imageBuffer)
-    let height = CVPixelBufferGetHeight(imageBuffer)
-    
-    let colorSpace = CGColorSpaceCreateDeviceRGB()
-    
-    guard let newContext = CGContext(
-        data: baseAddress,
-        width: width,
-        height: height,
-        bitsPerComponent: 8,
-        bytesPerRow: bytesPerRow,
-        space: colorSpace,
-        bitmapInfo: CGImageAlphaInfo.premultipliedFirst.rawValue|CGBitmapInfo.byteOrder32Little.rawValue
-        ) else {
-            return .failure(.createContextFailed)
-    }
-    
-    guard let imageRef = newContext.makeImage() else {
+    let ciImage = CIImage(cvPixelBuffer: imageBuffer)
+    let context = CIContext(options: [.useSoftwareRenderer: true])
+    guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else {
         return .failure(.createCGImageFailed)
     }
-    let resultImage = UIImage(cgImage: imageRef)
-    
-    CVPixelBufferUnlockBaseAddress(imageBuffer, CVPixelBufferLockFlags(rawValue: 0))
+    let resultImage = UIImage(cgImage: cgImage)
     
     return .success(resultImage)
 }
