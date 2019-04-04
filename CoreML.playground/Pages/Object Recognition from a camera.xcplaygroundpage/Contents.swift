@@ -32,9 +32,9 @@ class ViewController: UIViewController {
         }
     }()
     var request: VNCoreMLRequest!
-    lazy var previewLayer: AVCaptureVideoPreviewLayer = {
-        let layer = AVCaptureVideoPreviewLayer(sessionWithNoConnection: self.session)
-        layer.videoGravity = .resizeAspectFill
+    let previewLayer: AVSampleBufferDisplayLayer = {
+        let layer = AVSampleBufferDisplayLayer()
+        layer.videoGravity = .resizeAspect
         return layer
     }()
     lazy var previewView: UIView = {
@@ -49,13 +49,16 @@ class ViewController: UIViewController {
         view.text = "Nothing is detected."
         return view
     }()
+    lazy var stackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [self.previewView, self.label])
+        stackView.axis = .vertical
+        return stackView
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let stackView = UIStackView(arrangedSubviews: [self.previewView, self.label])
-        stackView.axis = .vertical
-        self.view = stackView
+        self.view = self.stackView
         
         self.setupCoreML()
         self.session.startRunning()
@@ -128,13 +131,10 @@ class ViewController: UIViewController {
 
 extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        if let buffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
-            DispatchQueue.main.async {
-                self.previewLayer.contents = buffer
-            }
-            
-            self.detect(imageBuffer: buffer)
+        DispatchQueue.main.async {
+            self.previewLayer.enqueue(sampleBuffer)
         }
+        CMSampleBufferGetImageBuffer(sampleBuffer).map(self.detect)
     }
 }
 
