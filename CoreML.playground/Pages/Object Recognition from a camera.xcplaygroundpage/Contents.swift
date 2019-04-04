@@ -32,9 +32,14 @@ class ViewController: UIViewController {
         }
     }()
     var request: VNCoreMLRequest!
-    let imageView: UIImageView = {
-        let view = UIImageView()
-        view.contentMode = .scaleAspectFit
+    lazy var previewLayer: AVCaptureVideoPreviewLayer = {
+        let layer = AVCaptureVideoPreviewLayer(sessionWithNoConnection: self.session)
+        layer.videoGravity = .resizeAspectFill
+        return layer
+    }()
+    lazy var previewView: UIView = {
+        let view = UIView()
+        view.layer.addSublayer(self.previewLayer)
         return view
     }()
     let label: UILabel = {
@@ -48,12 +53,16 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let stackView = UIStackView(arrangedSubviews: [self.imageView, self.label])
+        let stackView = UIStackView(arrangedSubviews: [self.previewView, self.label])
         stackView.axis = .vertical
         self.view = stackView
         
         self.setupCoreML()
         self.session.startRunning()
+    }
+    
+    override func viewWillLayoutSubviews() {
+        self.previewLayer.frame = self.view.bounds
     }
     
     func createSession(device: AVCaptureDevice) -> Result<AVCaptureSession, Error> {
@@ -117,13 +126,8 @@ class ViewController: UIViewController {
 extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         if let buffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
-            switch getImage(from: buffer) {
-            case let .success(image):
-                DispatchQueue.main.async {
-                    self.imageView.image = image
-                }
-            case let .failure(error):
-                fatalError(error.localizedDescription)
+            DispatchQueue.main.async {
+                self.previewLayer.contents = buffer
             }
             
             self.detect(imageBuffer: buffer)
@@ -177,21 +181,6 @@ func configureDevice(device: AVCaptureDevice) -> Result<(), ConfigureDeviceError
     device.unlockForConfiguration()
     
     return .success(())
-}
-
-enum GetImageError: Error {
-    case createCGImageFailed
-}
-
-func getImage(from imageBuffer: CVImageBuffer) -> Result<UIImage, GetImageError> {
-    let ciImage = CIImage(cvPixelBuffer: imageBuffer)
-    let context = CIContext(options: [.useSoftwareRenderer: true])
-    guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else {
-        return .failure(.createCGImageFailed)
-    }
-    let resultImage = UIImage(cgImage: cgImage)
-    
-    return .success(resultImage)
 }
 
 PlaygroundPage.current.wantsFullScreenLiveView = true
