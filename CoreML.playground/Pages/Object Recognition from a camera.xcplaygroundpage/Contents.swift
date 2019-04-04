@@ -93,6 +93,9 @@ class ViewController: UIViewController {
                 if connection.isVideoStabilizationSupported {
                     connection.preferredVideoStabilizationMode = .auto
                 }
+                if connection.isVideoOrientationSupported {
+                    connection.videoOrientation = .landscapeLeft
+                }
             }
             session.commitConfiguration()
         }
