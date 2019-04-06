@@ -6,7 +6,9 @@
     <string>camera</string>
     <key>Version</key>
     <string>6.0</string>
+    <key>LiveViewEdgeToEdge</key>
+    <true/>
     <key>LiveViewMode</key>
-    <string>HiddenByDefault</string>
+    <string>VisibleByDefault</string>
 </dict>
 </plist>
