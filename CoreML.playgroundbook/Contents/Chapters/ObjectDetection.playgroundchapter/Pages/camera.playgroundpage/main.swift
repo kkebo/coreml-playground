@@ -17,7 +17,7 @@ class ViewController: UIViewController {
         view.layer.addSublayer(self.previewLayer)
         return view
     }()
-    lazy var cap = try! VideoCaptureDevice(preset: .hd1280x720)
+    lazy var cap = try! VideoCaptureDevice(preset: .photo)
     
     override func viewDidLoad() {
         super.viewDidLoad()

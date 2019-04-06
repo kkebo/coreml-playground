@@ -29,7 +29,7 @@ class ViewController: UIViewController {
         stackView.axis = .vertical
         return stackView
     }()
-    lazy var cap = try! VideoCaptureDevice(preset: .hd1280x720)
+    lazy var cap = try! VideoCaptureDevice(preset: .photo)
     
     override func viewDidLoad() {
         super.viewDidLoad()
