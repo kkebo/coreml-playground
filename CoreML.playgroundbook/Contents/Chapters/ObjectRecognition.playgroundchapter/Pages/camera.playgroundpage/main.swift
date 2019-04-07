@@ -29,11 +29,18 @@ class ViewController: UIViewController {
         stackView.axis = .vertical
         return stackView
     }()
+    lazy var segmentedControl: UISegmentedControl = {
+        let control = UISegmentedControl(items: ["portrait", "portraitUpsideDown", "landscapeRight", "landscapeLeft"])
+        control.selectedSegmentIndex = 3
+        control.addTarget(self, action: "rotateCamera:", for: .valueChanged)
+        return control
+    }()
     lazy var cap = try! VideoCaptureDevice(preset: .photo)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.navigationItem.titleView = self.segmentedControl
         self.view = self.stackView
         
         self.setupCoreML()
@@ -44,6 +51,21 @@ class ViewController: UIViewController {
     
     override func viewWillLayoutSubviews() {
         self.previewLayer.frame = self.view.bounds
+    }
+    
+    @objc func rotateCamera(_ sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            self.cap.rotate(orientation: .portrait)
+        case 1:
+            self.cap.rotate(orientation: .portraitUpsideDown)
+        case 2:
+            self.cap.rotate(orientation: .landscapeRight)
+        case 3:
+            self.cap.rotate(orientation: .landscapeLeft)
+        default:
+            break
+        }
     }
     
     func setupCoreML() {
@@ -78,6 +100,4 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
     }
 }
 
-PlaygroundPage.current.wantsFullScreenLiveView = true
-PlaygroundPage.current.liveView = ViewController()
-
+PlaygroundPage.current.liveView = UINavigationController(rootViewController: ViewController())

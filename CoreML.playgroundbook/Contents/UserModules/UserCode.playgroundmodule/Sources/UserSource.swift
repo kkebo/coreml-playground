@@ -57,6 +57,12 @@ public struct VideoCaptureDevice {
             self.session.stopRunning()
         }
     }
+
+    public func rotate(orientation: AVCaptureVideoOrientation) {
+        if let connection = self.output.connection(with: .video), connection.isVideoOrientationSupported {
+            connection.videoOrientation = orientation
+        }
+    }
 }
 
 func getDefaultDevice() -> AVCaptureDevice? {
