@@ -1,4 +1,3 @@
-import CoreML
 import Vision
 import UIKit
 import AVFoundation
@@ -6,7 +5,6 @@ import PlaygroundSupport
 
 // ViewControllers
 class ViewController: UIViewController {
-    var request: VNCoreMLRequest!
     let previewLayer: AVSampleBufferDisplayLayer = {
         let layer = AVSampleBufferDisplayLayer()
         layer.videoGravity = .resizeAspect
@@ -36,14 +34,13 @@ class ViewController: UIViewController {
         return control
     }()
     lazy var cap = try! VideoCaptureDevice(preset: .photo)
+    let model = try! compileModel(at: #fileLiteral(resourceName: "MobileNet.mlmodel"))
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.navigationItem.titleView = self.segmentedControl
         self.view = self.stackView
-        
-        self.setupCoreML()
         
         self.cap.delegate = self
         self.cap.start()
@@ -68,26 +65,17 @@ class ViewController: UIViewController {
         }
     }
     
-    func setupCoreML() {
-        let modelUrl = #fileLiteral(resourceName: "MobileNet.mlmodel")
-        let compiledUrl = try! MLModel.compileModel(at: modelUrl)
-        let model = try! VNCoreMLModel(for: try! MLModel(contentsOf: compiledUrl))
-        self.request = VNCoreMLRequest(model: model) { request, error in
+    func detect(imageBuffer: CVImageBuffer) {
+        // Object Recognition
+        let request = VNCoreMLRequest(model: self.model) { request, error in
             if let observations = request.results as? [VNClassificationObservation], let best = observations.first {
                 DispatchQueue.main.async {
                     self.label.text = "\(best.identifier): \(best.confidence)"
                 }
             }
         }
-    }
-    
-    func detect(imageBuffer: CVImageBuffer) {
-        // Object Recognition
-        let handler = VNImageRequestHandler(cvPixelBuffer: imageBuffer)
-        let result = Result { try handler.perform([self.request]) }
-        if case let .failure(error) = result {
-            fatalError(error.localizedDescription)
-        }
+        
+        try! VNImageRequestHandler(cvPixelBuffer: imageBuffer).perform([request])
     }
 }
 

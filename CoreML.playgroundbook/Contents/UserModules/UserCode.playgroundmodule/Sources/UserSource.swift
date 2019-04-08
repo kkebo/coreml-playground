@@ -108,3 +108,12 @@ func configureDevice(device: AVCaptureDevice) -> Result<(), ConfigureDeviceError
 
     return .success(())
 }
+
+import Vision
+import CoreML
+
+public func compileModel(at url: URL) throws -> VNCoreMLModel {
+    let compiledUrl = try MLModel.compileModel(at: url)
+    let mlModel = try MLModel(contentsOf: compiledUrl)
+    return try VNCoreMLModel(for: mlModel)
+}
