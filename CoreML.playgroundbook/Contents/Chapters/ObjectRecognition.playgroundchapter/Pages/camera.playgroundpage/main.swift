@@ -3,6 +3,9 @@ import UIKit
 import AVFoundation
 import PlaygroundSupport
 
+// Parameters
+let threshold: Float = 0.5
+
 // ViewControllers
 class ViewController: UIViewController {
     let previewLayer: AVSampleBufferDisplayLayer = {
@@ -68,11 +71,21 @@ class ViewController: UIViewController {
     func detect(imageBuffer: CVImageBuffer) {
         // Object Recognition
         let request = VNCoreMLRequest(model: self.model) { request, error in
-            if let observations = request.results as? [VNClassificationObservation], let best = observations.first {
-                DispatchQueue.main.async {
-                    self.label.text = "\(best.identifier): \(best.confidence)"
-                }
+            DispatchQueue.main.async {
+                self.label.text = ""
+                self.label.numberOfLines = 0
             }
+            
+            request.results?
+                .lazy
+                .compactMap { $0 as? VNClassificationObservation }
+                .filter { $0.confidence >= threshold }
+                .forEach { cls in
+                    DispatchQueue.main.async {
+                        self.label.text?.append("\(cls.identifier): \(cls.confidence)\n")
+                        self.label.numberOfLines += 1
+                    }
+                }
         }
         
         try! VNImageRequestHandler(cvPixelBuffer: imageBuffer).perform([request])
