@@ -1,12 +1,13 @@
-import CoreML
 import Vision
 import UIKit
 import AVFoundation
 import PlaygroundSupport
 
+// Parameters
+let threshold: Float = 0.3
+
 // ViewControllers
 class ViewController: UIViewController {
-    var request: VNCoreMLRequest!
     let previewLayer: AVSampleBufferDisplayLayer = {
         let layer = AVSampleBufferDisplayLayer()
         layer.videoGravity = .resizeAspect
@@ -24,14 +25,13 @@ class ViewController: UIViewController {
         return control
     }()
     lazy var cap = try! VideoCaptureDevice(preset: .photo)
+    let model = try! compileModel(at: #fileLiteral(resourceName: "ObjectDetector.mlmodel"))
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.navigationItem.titleView = self.segmentedControl
         self.view = self.previewView
-        
-        self.setupCoreML()
         
         self.cap.delegate = self
         self.cap.start()
@@ -56,25 +56,33 @@ class ViewController: UIViewController {
         }
     }
     
-    func setupCoreML() {
-        let modelUrl = #fileLiteral(resourceName: "ObjectDetector.mlmodel")
-        let compiledUrl = try! MLModel.compileModel(at: modelUrl)
-        let model = try! VNCoreMLModel(for: try! MLModel(contentsOf: compiledUrl))
-        self.request = VNCoreMLRequest(model: model) { request, error in
-            request.results?.compactMap { $0 as? VNRecognizedObjectObservation }.forEach {
-                print($0.labels[0])
-                print($0.boundingBox)
-            }
-        }
-    }
-    
     func detect(imageBuffer: CVImageBuffer) {
-        // Object Recognition
-        let handler = VNImageRequestHandler(cvPixelBuffer: imageBuffer)
-        let result = Result { try handler.perform([self.request]) }
-        if case let .failure(error) = result {
-            fatalError(error.localizedDescription)
+        // Object Detection
+        let request = VNCoreMLRequest(model: self.model) { request, error in
+            // Remove all layers but the preview layer
+            self.view.layer.sublayers?.removeSubrange(1...)
+            
+            request.results?
+                .lazy
+                .compactMap { $0 as? VNRecognizedObjectObservation }
+                .filter { $0.labels[0].confidence >= threshold }
+                .forEach {
+                    print($0.labels[0])
+                    
+                    let bbox = $0.boundingBox
+                        .applying(CGAffineTransform(scaleX: self.view.bounds.width, y: self.view.bounds.height))
+                    
+                    let layer = CAShapeLayer()
+                    layer.strokeColor = #colorLiteral(red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0)
+                    layer.fillColor = nil
+                    layer.path = UIBezierPath(rect: bbox).cgPath
+                    DispatchQueue.main.async {
+                        self.view.layer.addSublayer(layer)
+                    }
+                }
         }
+        
+        try! VNImageRequestHandler(cvPixelBuffer: imageBuffer).perform([request])
     }
 }
 
