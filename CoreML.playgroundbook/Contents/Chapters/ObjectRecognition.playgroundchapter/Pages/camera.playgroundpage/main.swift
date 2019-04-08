@@ -100,4 +100,5 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
     }
 }
 
+PlaygroundPage.current.wantsFullScreenLiveView = true
 PlaygroundPage.current.liveView = UINavigationController(rootViewController: ViewController())
