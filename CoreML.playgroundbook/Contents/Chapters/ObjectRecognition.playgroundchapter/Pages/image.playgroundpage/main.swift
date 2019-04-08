@@ -4,7 +4,7 @@ import PlaygroundSupport
 
 // Parameters
 let uiImage = #imageLiteral(resourceName: "IMG_0032.JPG")
-let threshold: Float = 0.3
+let threshold: Float = 0.5
 
 // Views
 let imageView = UIImageView(image: uiImage)
