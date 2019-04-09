@@ -69,8 +69,15 @@ class ViewController: UIViewController {
     }
     
     func detect(imageBuffer: CVImageBuffer) {
+        let start = DispatchTime.now()
+        
         // Object Recognition
         let request = VNCoreMLRequest(model: self.model) { request, error in
+            let end = DispatchTime.now()
+            let elapsedNano = end.uptimeNanoseconds - start.uptimeNanoseconds
+            let elapsed = Float64(elapsedNano) / 1_000_000_000
+            let fps = 1 / elapsed
+            
             DispatchQueue.main.async {
                 self.label.text = ""
                 self.label.numberOfLines = 0
