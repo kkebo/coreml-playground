@@ -16,9 +16,9 @@ PlaygroundPage.current.liveView = stackView
 // Object Recognition
 let model = try compileModel(at: #fileLiteral(resourceName: "MobileNet.mlmodel"))
 let request = VNCoreMLRequest(model: model) { request, error in
-    guard let observations = request.results as? [VNClassificationObservation] else { fatalError() }
-    let labels = observations
+    request.results?
         .lazy
+        .compactMap { $0 as? VNClassificationObservation }
         .filter { $0.confidence >= threshold }
         .map {
             let label = UILabel()
