@@ -13,9 +13,25 @@ class ViewController: UIViewController {
         layer.videoGravity = .resizeAspect
         return layer
     }()
+    let fpsLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = #colorLiteral(red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0)
+        label.text = "fps: -"
+        return label
+    }()
+    let bboxLayer = CALayer()
     lazy var previewView: UIView = {
         let view = UIView()
+        
         view.layer.addSublayer(self.previewLayer)
+        view.layer.addSublayer(self.bboxLayer)
+        
+        view.addSubview(self.fpsLabel)
+        NSLayoutConstraint.activate([
+            self.fpsLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+        
         return view
     }()
     lazy var segmentedControl: UISegmentedControl = {
@@ -65,9 +81,12 @@ class ViewController: UIViewController {
             let elapsedNano = end.uptimeNanoseconds - start.uptimeNanoseconds
             let elapsed = Float64(elapsedNano) / 1_000_000_000
             let fps = 1 / elapsed
+            DispatchQueue.main.async {
+                self.fpsLabel.text = "fps: \(fps)"
+            }
             
-            // Remove all layers but the preview layer
-            self.view.layer.sublayers?.removeSubrange(1...)
+            // Remove all bboxes
+            self.bboxLayer.sublayers?.removeAll()
             
             request.results?
                 .lazy
@@ -84,7 +103,7 @@ class ViewController: UIViewController {
                     layer.fillColor = nil
                     layer.path = UIBezierPath(rect: bbox).cgPath
                     DispatchQueue.main.async {
-                        self.view.layer.addSublayer(layer)
+                        self.bboxLayer.addSublayer(layer)
                     }
                 }
         }

@@ -13,9 +13,23 @@ class ViewController: UIViewController {
         layer.videoGravity = .resizeAspect
         return layer
     }()
+    let fpsLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = #colorLiteral(red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0)
+        label.text = "fps: -"
+        return label
+    }()
     lazy var previewView: UIView = {
         let view = UIView()
+        
         view.layer.addSublayer(self.previewLayer)
+        
+        view.addSubview(self.fpsLabel)
+        NSLayoutConstraint.activate([
+            self.fpsLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+        ])
+        
         return view
     }()
     let label: UILabel = {
@@ -79,6 +93,8 @@ class ViewController: UIViewController {
             let fps = 1 / elapsed
             
             DispatchQueue.main.async {
+                self.fpsLabel.text = "fps: \(fps)"
+                
                 self.label.text = ""
                 self.label.numberOfLines = 0
             }
