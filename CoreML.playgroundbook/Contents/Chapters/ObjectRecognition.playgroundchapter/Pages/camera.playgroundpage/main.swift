@@ -32,15 +32,15 @@ class ViewController: UIViewController {
         
         return view
     }()
-    let label: UILabel = {
-        let view = UILabel()
-        view.textAlignment = .center
-        view.backgroundColor = #colorLiteral(red: 0.258823543787003, green: 0.756862759590149, blue: 0.968627452850342, alpha: 1.0)
-        view.text = "Nothing is detected."
-        return view
+    let classesLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.backgroundColor = #colorLiteral(red: 0.258823543787003, green: 0.756862759590149, blue: 0.968627452850342, alpha: 1.0)
+        label.text = "Nothing is detected."
+        return label
     }()
     lazy var stackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [self.previewView, self.label])
+        let stackView = UIStackView(arrangedSubviews: [self.previewView, self.classesLabel])
         stackView.axis = .vertical
         return stackView
     }()
@@ -95,8 +95,7 @@ class ViewController: UIViewController {
             DispatchQueue.main.async {
                 self.fpsLabel.text = "fps: \(fps)"
                 
-                self.label.text = ""
-                self.label.numberOfLines = 0
+                self.classesLabel.text = ""
             }
             
             request.results?
@@ -105,8 +104,7 @@ class ViewController: UIViewController {
                 .filter { $0.confidence >= threshold }
                 .forEach { cls in
                     DispatchQueue.main.async {
-                        self.label.text?.append("\(cls.identifier): \(cls.confidence)\n")
-                        self.label.numberOfLines += 1
+                        self.classesLabel.text?.append("\(cls.identifier): \(cls.confidence)\n")
                     }
                 }
         }
