@@ -52,6 +52,7 @@ class ViewController: UIViewController {
     }()
     lazy var cap = try! VideoCaptureDevice(preset: .photo)
     let model = try! compileModel(at: #fileLiteral(resourceName: "MobileNet.mlmodel"))
+    lazy var request = VNCoreMLRequest(model: self.model, completionHandler: self.processClassifications)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -83,21 +84,22 @@ class ViewController: UIViewController {
     }
     
     func detect(imageBuffer: CVImageBuffer) {
-        let start = DispatchTime.now()
+        let handler = VNImageRequestHandler(cvPixelBuffer: imageBuffer)
         
-        // Object Recognition
-        let request = VNCoreMLRequest(model: self.model) { request, error in
-            let end = DispatchTime.now()
-            let elapsedNano = end.uptimeNanoseconds - start.uptimeNanoseconds
-            let elapsed = Float64(elapsedNano) / 1_000_000_000
-            let fps = 1 / elapsed
-            
-            DispatchQueue.main.async {
-                self.fpsLabel.text = "fps: \(fps)"
-                
-                self.classesLabel.text = ""
-            }
-            
+        let start = DispatchTime.now()
+        try! handler.perform([self.request])
+        let fps = 1 / DispatchTime.now().durationSec(since: start)
+        DispatchQueue.main.async {
+            self.fpsLabel.text = "fps: \(fps)"
+        }
+    }
+    
+    func processClassifications(for request: VNRequest, error: Error?) {
+        DispatchQueue.main.async {
+            self.classesLabel.text = ""
+        }
+        
+        DispatchQueue.global().async {
             request.results?
                 .lazy
                 .compactMap { $0 as? VNClassificationObservation }
@@ -108,8 +110,6 @@ class ViewController: UIViewController {
                     }
                 }
         }
-        
-        try! VNImageRequestHandler(cvPixelBuffer: imageBuffer).perform([request])
     }
 }
 
