@@ -69,6 +69,7 @@ class ViewController: UIViewController {
     }
     
     override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
         self.previewLayer.frame = self.view.bounds
     }
     
