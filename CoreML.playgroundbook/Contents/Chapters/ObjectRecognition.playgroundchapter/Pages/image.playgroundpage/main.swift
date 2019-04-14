@@ -33,6 +33,7 @@ let request = VNCoreMLRequest(model: model) { request, error in
             }
         }
 }
+request.imageCropAndScaleOption = .scaleFill
 
 guard let ciImage = CIImage(image: uiImage) else { fatalError() }
 try VNImageRequestHandler(ciImage: ciImage).perform([request])

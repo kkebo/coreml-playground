@@ -52,7 +52,11 @@ class ViewController: UIViewController {
     }()
     lazy var cap = try! VideoCaptureDevice(preset: .photo)
     let model = try! compileModel(at: #fileLiteral(resourceName: "MobileNet.mlmodel"))
-    lazy var request = VNCoreMLRequest(model: self.model, completionHandler: self.processClassifications)
+    lazy var request: VNCoreMLRequest = {
+        let request = VNCoreMLRequest(model: self.model, completionHandler: self.processClassifications)
+        request.imageCropAndScaleOption = .scaleFill
+        return request
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
