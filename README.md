@@ -2,6 +2,8 @@
 
 CoreML examples for Swift Playgrounds 3.0 on iOS 12.2 or later
 
+![capture](capture.gif)
+
 ## Get Started
 
 ### Chapter 1: Object Recognition
