@@ -25,6 +25,7 @@ class ViewController: UIViewController {
         
         view.layer.addSublayer(self.previewLayer)
         
+        view.addSubview(self.classesLabel)
         view.addSubview(self.fpsLabel)
         view.addSubview(self.segmentedControl)
         
@@ -32,15 +33,11 @@ class ViewController: UIViewController {
     }()
     let classesLabel: UILabel = {
         let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
-        label.backgroundColor = #colorLiteral(red: 0.258823543787003, green: 0.756862759590149, blue: 0.968627452850342, alpha: 1.0)
+        label.backgroundColor = #colorLiteral(red: 0.258823543787003, green: 0.756862759590149, blue: 0.968627452850342, alpha: 0.5)
         label.text = "Nothing is detected."
         return label
-    }()
-    lazy var stackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [self.previewView, self.classesLabel])
-        stackView.axis = .vertical
-        return stackView
     }()
     lazy var segmentedControl: UISegmentedControl = {
         let control = UISegmentedControl(items: ["portrait", "portraitUpsideDown", "landscapeRight", "landscapeLeft"])
@@ -78,9 +75,12 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.view = self.stackView
+        self.view = self.previewView
         
         NSLayoutConstraint.activate([
+            self.classesLabel.bottomAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.bottomAnchor),
+            self.classesLabel.leadingAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.leadingAnchor),
+            self.classesLabel.trailingAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.trailingAnchor),
             self.fpsLabel.bottomAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.bottomAnchor),
             self.segmentedControl.topAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.topAnchor),
             self.segmentedControl.centerXAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.centerXAnchor)
