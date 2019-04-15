@@ -26,9 +26,7 @@ class ViewController: UIViewController {
         view.layer.addSublayer(self.previewLayer)
         
         view.addSubview(self.fpsLabel)
-        NSLayoutConstraint.activate([
-            self.fpsLabel.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-        ])
+        view.addSubview(self.segmentedControl)
         
         return view
     }()
@@ -48,6 +46,25 @@ class ViewController: UIViewController {
         let control = UISegmentedControl(items: ["portrait", "portraitUpsideDown", "landscapeRight", "landscapeLeft"])
         control.selectedSegmentIndex = 3
         control.addTarget(self, action: "rotateCamera:", for: .valueChanged)
+        
+        control.translatesAutoresizingMaskIntoConstraints = false
+        control.backgroundColor = .clear
+        control.tintColor = .clear
+        control.setTitleTextAttributes(
+            [
+                NSAttributedString.Key.font : UIFont.preferredFont(forTextStyle: .headline),
+                NSAttributedString.Key.foregroundColor: UIColor.lightGray
+            ],
+            for: .normal
+        )
+        control.setTitleTextAttributes(
+            [
+                NSAttributedString.Key.font : UIFont.preferredFont(forTextStyle: .headline),
+                NSAttributedString.Key.foregroundColor: UIColor.orange
+            ],
+            for: .selected
+        )
+        
         return control
     }()
     lazy var cap = try! VideoCaptureDevice(preset: .photo)
@@ -61,8 +78,13 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.navigationItem.titleView = self.segmentedControl
         self.view = self.stackView
+        
+        NSLayoutConstraint.activate([
+            self.fpsLabel.bottomAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.bottomAnchor),
+            self.segmentedControl.topAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.topAnchor),
+            self.segmentedControl.centerXAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.centerXAnchor)
+        ])
         
         self.cap.delegate = self
         self.cap.start()
@@ -127,5 +149,7 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
     }
 }
 
+extension ViewController: PlaygroundLiveViewSafeAreaContainer {}
+
 PlaygroundPage.current.wantsFullScreenLiveView = true
-PlaygroundPage.current.liveView = UINavigationController(rootViewController: ViewController())
+PlaygroundPage.current.liveView = ViewController()

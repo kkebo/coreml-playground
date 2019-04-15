@@ -7,7 +7,7 @@
     <key>Version</key>
     <string>6.0</string>
     <key>LiveViewEdgeToEdge</key>
-    <false/>
+    <true/>
     <key>LiveViewMode</key>
     <string>VisibleByDefault</string>
 </dict>
