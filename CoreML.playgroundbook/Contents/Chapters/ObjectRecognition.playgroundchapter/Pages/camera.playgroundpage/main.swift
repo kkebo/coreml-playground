@@ -28,6 +28,7 @@ class ViewController: UIViewController {
         view.addSubview(self.classesLabel)
         view.addSubview(self.fpsLabel)
         view.addSubview(self.segmentedControl)
+        view.addSubview(self.flipCameraButton)
         
         return view
     }()
@@ -64,7 +65,40 @@ class ViewController: UIViewController {
         
         return control
     }()
-    lazy var cap = try! VideoCaptureDevice(preset: .photo)
+    let flipCameraButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: "flipCamera:", for: .touchUpInside)
+        button.setAttributedTitle(
+            NSAttributedString(
+                string: "Flip",
+                attributes: [
+                    NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .headline),
+                    NSAttributedString.Key.foregroundColor: UIColor.orange
+                ]
+            ),
+            for: .normal
+        )
+        return button
+    }()
+    
+    lazy var caps: [VideoCaptureDevice] = [
+        {
+            var cap = try! VideoCaptureDevice(preset: .photo, position: .back, mirrored: false)
+            cap.delegate = self
+            return cap
+        }(),
+        {
+            var cap = try! VideoCaptureDevice(preset: .photo, position: .front, mirrored: true)
+            cap.delegate = self
+            return cap
+        }(),
+    ]
+    var capId = 0
+    var cap: VideoCaptureDevice {
+        return self.caps[self.capId]
+    }
+    
     let model = try! compileModel(at: #fileLiteral(resourceName: "MobileNet.mlmodel"))
     lazy var request: VNCoreMLRequest = {
         let request = VNCoreMLRequest(model: self.model, completionHandler: self.processClassifications)
@@ -83,10 +117,13 @@ class ViewController: UIViewController {
             self.classesLabel.trailingAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.trailingAnchor),
             self.fpsLabel.bottomAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.bottomAnchor),
             self.segmentedControl.topAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.topAnchor),
-            self.segmentedControl.centerXAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.centerXAnchor)
+            self.segmentedControl.centerXAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.centerXAnchor),
+            self.segmentedControl.leftAnchor.constraint(greaterThanOrEqualTo: self.liveViewSafeAreaGuide.leftAnchor),
+            self.segmentedControl.rightAnchor.constraint(lessThanOrEqualTo: self.liveViewSafeAreaGuide.rightAnchor),
+            self.flipCameraButton.bottomAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.bottomAnchor),
+            self.flipCameraButton.rightAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.rightAnchor),
         ])
         
-        self.cap.delegate = self
         self.cap.start()
     }
     
@@ -108,6 +145,14 @@ class ViewController: UIViewController {
         default:
             break
         }
+    }
+    
+    @objc func flipCamera(_ sender: UIButton) {
+        UIView.transition(with: self.view, duration: 0.4, options: .transitionFlipFromLeft, animations: {
+            self.cap.stop()
+            self.capId = self.capId == 0 ? 1 : 0
+            self.cap.start()
+        })
     }
     
     func detect(imageBuffer: CVImageBuffer) {

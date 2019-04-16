@@ -27,14 +27,19 @@ public struct VideoCaptureDevice {
                 if connection.isVideoOrientationSupported {
                     connection.videoOrientation = .landscapeLeft
                 }
+                if connection.isVideoMirroringSupported {
+                    connection.isVideoMirrored = self.mirrored
+                }
             }
         }
     }
+    let mirrored: Bool
 
-    public init(preset: AVCaptureSession.Preset) throws {
+    public init(preset: AVCaptureSession.Preset, position: AVCaptureDevice.Position, mirrored: Bool) throws {
         self.session.sessionPreset = preset
+        self.mirrored = mirrored
 
-        let device = getDefaultDevice()!
+        let device = getDefaultDevice(position: position)!
         try configureDevice(device: device).get()
         let input = try AVCaptureDeviceInput(device: device)
 
@@ -65,10 +70,10 @@ public struct VideoCaptureDevice {
     }
 }
 
-func getDefaultDevice() -> AVCaptureDevice? {
-    if let device = AVCaptureDevice.default(.builtInDualCamera , for: .video, position: .back) {
+func getDefaultDevice(position: AVCaptureDevice.Position) -> AVCaptureDevice? {
+    if let device = AVCaptureDevice.default(.builtInDualCamera , for: .video, position: position) {
         return device
-    } else if let device = AVCaptureDevice.default(.builtInWideAngleCamera , for: .video, position: .back) {
+    } else if let device = AVCaptureDevice.default(.builtInWideAngleCamera , for: .video, position: position) {
         return device
     } else {
         return nil
