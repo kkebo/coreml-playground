@@ -8,31 +8,6 @@ public struct VideoCaptureDevice {
         output.alwaysDiscardsLateVideoFrames = true
         return output
     }()
-    public var delegate: AVCaptureVideoDataOutputSampleBufferDelegate? {
-        get {
-            return self.output.sampleBufferDelegate
-        }
-        set {
-            if session.isRunning {
-                self.session.stopRunning()
-            }
-
-            let queue = DispatchQueue(label: "cameraQueue")
-            self.output.setSampleBufferDelegate(newValue, queue: queue)
-
-            if let connection = self.output.connection(with: .video) {
-                if connection.isVideoStabilizationSupported {
-                    connection.preferredVideoStabilizationMode = .auto
-                }
-                if connection.isVideoOrientationSupported {
-                    connection.videoOrientation = .landscapeLeft
-                }
-                if connection.isVideoMirroringSupported {
-                    connection.isVideoMirrored = self.mirrored
-                }
-            }
-        }
-    }
     let mirrored: Bool
 
     public init(preset: AVCaptureSession.Preset, position: AVCaptureDevice.Position, mirrored: Bool) throws {
@@ -60,6 +35,27 @@ public struct VideoCaptureDevice {
     public func stop() {
         if self.session.isRunning {
             self.session.stopRunning()
+        }
+    }
+    
+    public func setDelegate(_ delegate: AVCaptureVideoDataOutputSampleBufferDelegate) {
+        if session.isRunning {
+            self.session.stopRunning()
+        }
+
+        let queue = DispatchQueue(label: "cameraQueue")
+        self.output.setSampleBufferDelegate(delegate, queue: queue)
+
+        if let connection = self.output.connection(with: .video) {
+            if connection.isVideoStabilizationSupported {
+                connection.preferredVideoStabilizationMode = .auto
+            }
+            if connection.isVideoOrientationSupported {
+                connection.videoOrientation = .landscapeLeft
+            }
+            if connection.isVideoMirroringSupported {
+                connection.isVideoMirrored = self.mirrored
+            }
         }
     }
 

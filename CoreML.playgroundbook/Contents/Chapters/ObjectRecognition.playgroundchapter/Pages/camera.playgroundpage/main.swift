@@ -84,13 +84,13 @@ class ViewController: UIViewController {
     
     lazy var caps: [VideoCaptureDevice] = [
         {
-            var cap = try! VideoCaptureDevice(preset: .photo, position: .back, mirrored: false)
-            cap.delegate = self
+            let cap = try! VideoCaptureDevice(preset: .photo, position: .back, mirrored: false)
+            cap.setDelegate(self)
             return cap
         }(),
         {
-            var cap = try! VideoCaptureDevice(preset: .photo, position: .front, mirrored: true)
-            cap.delegate = self
+            let cap = try! VideoCaptureDevice(preset: .photo, position: .front, mirrored: true)
+            cap.setDelegate(self)
             return cap
         }(),
     ]
