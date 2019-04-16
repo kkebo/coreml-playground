@@ -49,14 +49,14 @@ class ViewController: UIViewController {
         control.tintColor = .clear
         control.setTitleTextAttributes(
             [
-                NSAttributedString.Key.font : UIFont.preferredFont(forTextStyle: .headline),
+                NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .headline),
                 NSAttributedString.Key.foregroundColor: UIColor.lightGray
             ],
             for: .normal
         )
         control.setTitleTextAttributes(
             [
-                NSAttributedString.Key.font : UIFont.preferredFont(forTextStyle: .headline),
+                NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .headline),
                 NSAttributedString.Key.foregroundColor: UIColor.orange
             ],
             for: .selected
