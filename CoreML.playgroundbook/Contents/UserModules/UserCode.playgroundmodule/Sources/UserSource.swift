@@ -38,7 +38,7 @@ public struct VideoCaptureDevice {
         }
     }
     
-    public func setDelegate(_ delegate: AVCaptureVideoDataOutputSampleBufferDelegate) {
+    public func setDelegate(_ delegate: AVCaptureVideoDataOutputSampleBufferDelegate?) {
         if session.isRunning {
             self.session.stopRunning()
         }
