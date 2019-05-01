@@ -21,6 +21,8 @@
     <string>6.0</string>
     <key>SwiftVersion</key>
     <string>5.0</string>
+    <key>MinimumSwiftPlaygroundsVersion</key>
+    <string>3.0</string>
     <key>UserModuleMode</key>
     <string>Full</string>
     <key>UserAutoImportedAuxiliaryModules</key>
