@@ -15,6 +15,8 @@
     <string>ios12.2</string>
     <key>DevelopmentRegion</key>
     <string>en-US</string>
+    <key>ImageReference</key>
+    <string>thumbnail.png</string>
     <key>Name</key>
     <string>CoreML</string>
     <key>Version</key>
