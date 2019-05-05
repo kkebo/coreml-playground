@@ -1,3 +1,5 @@
+![banner](banner.png)
+
 # coreml-playground
 
 [![Swift](https://img.shields.io/badge/Swift-5.0-orange.svg)](https://developer.apple.com/swift/)
@@ -10,6 +12,8 @@ CoreML examples for Swift Playgrounds 3.0 on iOS 12.2 or later
 ![capture](capture.gif)
 
 ## Get Started
+
+[Subscribe the feed](https://developer.apple.com/ul/sp0?url=https://raw.githubusercontent.com/kkk669/coreml-playground/master/feed.json)
 
 ### Chapter 1: Object Recognition
 
