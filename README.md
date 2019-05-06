@@ -1,4 +1,4 @@
-![banner](banner.png)
+![banner](images/banner.png)
 
 # coreml-playground
 
@@ -9,7 +9,7 @@
 
 CoreML examples for Swift Playgrounds 3.0 on iOS 12.2 or later
 
-![capture](capture.gif)
+![capture](images/capture.gif)
 
 ## Get Started
 

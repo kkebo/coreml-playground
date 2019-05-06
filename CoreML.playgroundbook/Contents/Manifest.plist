@@ -10,13 +10,13 @@
     <key>ContentIdentifier</key>
     <string>com.kebo.playgroundbook.coreml</string>
     <key>ContentVersion</key>
-    <string>1</string>
+    <string>1.0.1</string>
     <key>DeploymentTarget</key>
     <string>ios12.2</string>
     <key>DevelopmentRegion</key>
     <string>en-US</string>
     <key>ImageReference</key>
-    <string>thumbnail.png</string>
+    <string>cover.png</string>
     <key>Name</key>
     <string>CoreML</string>
     <key>Version</key>
