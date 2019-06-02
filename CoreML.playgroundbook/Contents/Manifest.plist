@@ -4,8 +4,7 @@
 <dict>
     <key>Chapters</key>
     <array>
-        <string>ObjectRecognition.playgroundchapter</string>
-        <string>ObjectDetection.playgroundchapter</string>
+        <string>CoreML.playgroundchapter</string>
     </array>
     <key>ContentIdentifier</key>
     <string>com.kebo.playgroundbook.coreml</string>

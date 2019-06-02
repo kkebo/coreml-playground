@@ -3,9 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>Name</key>
-    <string>camera</string>
-    <key>Version</key>
-    <string>6.0</string>
+    <string>ObjectDetectionCamera</string>
     <key>LiveViewEdgeToEdge</key>
     <true/>
     <key>LiveViewMode</key>
