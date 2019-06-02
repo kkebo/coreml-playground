@@ -11,15 +11,15 @@
             "overviewSubtitle": "Machine Learning Examples",
             "description": "Machine Learning Examples",
             "contentIdentifier": "com.kebo.playgroundbook.coreml",
-            "contentVersion": "1.2.0",
-            "url": "https://github.com/kkk669/coreml-playground/releases/download/v1.2.0/CoreML.playgroundbook.zip",
+            "contentVersion": "1.2.1",
+            "url": "https://github.com/kkk669/coreml-playground/releases/download/v1.2.1/CoreML.playgroundbook.zip",
             "publishedDate": "2019-05-06T02:40:00+0900",
             "lastUpdatedDate": "2019-06-03T02:00:00+0900",
             "sha512": "1cee862257278cd6115504cafba96e23f9f0ba9e684ed83b782f1ba280ad378d99543935a23e9fc28476955b2c95e397d7091e0b39f8c2a274c788ea17f00148",
-            "thumbnailURL": "https://raw.githubusercontent.com/kkk669/coreml-playground/v1.2.0/images/thumbnail.png",
-            "bannerImageURL": "https://raw.githubusercontent.com/kkk669/coreml-playground/v1.2.0/images/banner.png",
+            "thumbnailURL": "https://raw.githubusercontent.com/kkk669/coreml-playground/v1.2.1/images/thumbnail.png",
+            "bannerImageURL": "https://raw.githubusercontent.com/kkk669/coreml-playground/v1.2.1/images/banner.png",
             "previewImageURLs": [
-                "https://raw.githubusercontent.com/kkk669/coreml-playground/v1.2.0/images/preview.png"
+                "https://raw.githubusercontent.com/kkk669/coreml-playground/v1.2.1/images/preview.png"
             ],
             "additionalInformation": [
                 {
