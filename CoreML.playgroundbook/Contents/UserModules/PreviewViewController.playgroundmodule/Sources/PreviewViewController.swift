@@ -18,7 +18,7 @@ open class PreviewViewController: UIViewController {
     lazy var segmentedControl: UISegmentedControl = {
         let control = UISegmentedControl(items: ["portrait", "portraitUpsideDown", "landscapeRight", "landscapeLeft"])
         control.selectedSegmentIndex = 3
-        control.addTarget(self, action: "rotateCamera:", for: .valueChanged)
+        control.addTarget(self, action: #selector(self.rotateCamera), for: .valueChanged)
         
         control.translatesAutoresizingMaskIntoConstraints = false
         control.backgroundColor = .clear
@@ -43,7 +43,7 @@ open class PreviewViewController: UIViewController {
     let flipCameraButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: "flipCamera:", for: .touchUpInside)
+        button.addTarget(self, action: #selector(self.flipCamera), for: .touchUpInside)
         button.setAttributedTitle(
             NSAttributedString(
                 string: "Flip",
