@@ -40,7 +40,7 @@ open class PreviewViewController: UIViewController {
         
         return control
     }()
-    let flipCameraButton: UIButton = {
+    lazy var flipCameraButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(self.flipCamera), for: .touchUpInside)
