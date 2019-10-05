@@ -11,7 +11,7 @@
     <key>ContentVersion</key>
     <string>1.2.2</string>
     <key>DeploymentTarget</key>
-    <string>ios12.2</string>
+    <string>ios-current</string>
     <key>DevelopmentRegion</key>
     <string>en-US</string>
     <key>ImageReference</key>
@@ -19,11 +19,11 @@
     <key>Name</key>
     <string>CoreML</string>
     <key>Version</key>
-    <string>6.0</string>
+    <string>7.0</string>
     <key>SwiftVersion</key>
-    <string>5.0</string>
+    <string>5.1</string>
     <key>MinimumSwiftPlaygroundsVersion</key>
-    <string>3.0</string>
+    <string>3.1</string>
     <key>UserModuleMode</key>
     <string>Full</string>
     <key>UserAutoImportedAuxiliaryModules</key>
