@@ -13,7 +13,7 @@ CoreML examples for Swift Playgrounds 3.1 on iPadOS 13.1 or later
 
 ## Get Started
 
-[Subscribe the feed](https://developer.apple.com/ul/sp0?url=https://kkk669.github.io/coreml-playground/feed.json)
+[Subscribe the feed](https://developer.apple.com/ul/sp0?url=https://kebo.xyz/coreml-playground/feed.json)
 
 ### Chapter 1: Object Recognition
 
