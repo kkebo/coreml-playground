@@ -16,12 +16,12 @@ jobs:
         TITLE: Core ML Playground Book
         SUBTITLE: Machine Learning Examples
         PUBLISHER_NAME: Kenta Kubo
-        FEED_IDENTIFIER: xyz.kebo
+        FEED_IDENTIFIER: xyz.kebo.playgroundbook.coreml
         CONTACT_URL: https://kebo.xyz
         DOCUMENT_TITLE: CoreML
         DOCUMENT_OVERVIEW_SUBTITLE: Machine Learning Examples
         DOCUMENT_DESCRIPTION: Machine Learning Examples
-        DOCUMENT_CONTENT_IDENTIFIER: xyz.kebo.playgroundbook.coreml
+        DOCUMENT_CONTENT_IDENTIFIER: xyz.kebo.playgroundbook.coreml.coreml
         DOCUMENT_URL: https://kebo.xyz/coreml-playground/CoreML.playgroundbook.zip
       run: |
         zip -r CoreML.playgroundbook.zip CoreML.playgroundbook
