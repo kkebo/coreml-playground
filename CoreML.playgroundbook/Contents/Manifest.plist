@@ -9,7 +9,7 @@
     <key>ContentIdentifier</key>
     <string>xyz.kebo.playgroundbook.coreml</string>
     <key>ContentVersion</key>
-    <string>1.3.4</string>
+    <string>1.3.5</string>
     <key>DeploymentTarget</key>
     <string>ios-current</string>
     <key>DevelopmentRegion</key>
