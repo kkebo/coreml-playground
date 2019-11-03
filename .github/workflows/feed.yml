@@ -23,9 +23,10 @@ jobs:
         DOCUMENT_DESCRIPTION: Machine Learning Examples
         DOCUMENT_CONTENT_IDENTIFIER: xyz.kebo.playgroundbook.coreml.coreml
         DOCUMENT_URL: https://kebo.xyz/coreml-playground/CoreML.playgroundbook.zip
+        PLAYGROUNDBOOK_FILENAME: CoreML.playgroundbook
       run: |
-        zip -r CoreML.playgroundbook.zip CoreML.playgroundbook
-        DOCUMENT_SHA512=$(sha512sum CoreML.playgroundbook.zip | awk '{print $1}')
+        zip -r "${PLAYGROUNDBOOK_FILENAME}.zip" "${PLAYGROUNDBOOK_FILENAME}"
+        DOCUMENT_SHA512=$(sha512sum "${PLAYGROUNDBOOK_FILENAME}" | awk '{print $1}')
         DOCUMENT_PUBLISHED_DATE=2019-05-06T02:40:00+0900
         DOCUMENT_LAST_UPDATED_DATE=$(date -Iseconds)
         TAG_NAME=$(echo $GITHUB_REF | sed -e 's/refs\/tags\///g')
