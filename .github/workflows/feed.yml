@@ -1,0 +1,74 @@
+name: Publish feed.json
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+    runs-on: macOS-latest
+    steps:
+    - uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+    - name: Build
+      env:
+        TITLE: Core ML Playground Book
+        SUBTITLE: Machine Learning Examples
+        PUBLISHER_NAME: Kenta Kubo
+        FEED_IDENTIFIER: xyz.kebo
+        CONTACT_URL: https://kebo.xyz
+        DOCUMENT_TITLE: CoreML
+        DOCUMENT_OVERVIEW_SUBTITLE: Machine Learning Examples
+        DOCUMENT_DESCRIPTION: Machine Learning Examples
+        DOCUMENT_CONTENT_IDENTIFIER: xyz.kebo.playgroundbook.coreml
+        DOCUMENT_URL: https://kkk669.github.io/coreml-playground/CoreML.playgroundbook.zip
+        DOCUMENT_PUBLISHED_DATE: 2019-05-06T02:40:00+0900
+      run: |
+        zip -r CoreML.playgroundbook.zip CoreML.playgroundbook
+        DOCUMENT_SHA512=$(sha512sum CoreML.playgroundbook.zip | awk '{print $1}')
+        DOCUMENT_LAST_UPDATED_DATE=$(date +%Y-%m-%dT%H:%M:%S%z)
+        TAG_NAME=$(echo $GITHUB_REF | sed -e 's/refs\/tags\///g')
+        DOCUMENT_CONTENT_VERSION=$(echo $TAG_NAME | cut -c 2-)
+        cat > feed.json << EOF
+        {
+            "title": "${TITLE}",
+            "subtitle": "${SUBTITLE}",
+            "publisherName": "${PUBLISHER_NAME}",
+            "feedIdentifier": "${FEED_IDENTIFIER}",
+            "contactURL": "${CONTACT_URL}",
+            "formatVersion": "1.2",
+            "documents": [
+                {
+                    "title": "${DOCUMENT_TITLE}",
+                    "overviewSubtitle": "${DOCUMENT_OVERVIEW_SUBTITLE}",
+                    "description": "${DOCUMENT_DESCRIPTION}",
+                    "contentIdentifier": "${DOCUMENT_CONTENT_IDENTIFIER}",
+                    "contentVersion": "${DOCUMENT_CONTENT_VERSION}",
+                    "url": "${DOCUMENT_URL}",
+                    "publishedDate": "${DOCUMENT_PUBLISHED_DATE}",
+                    "lastUpdatedDate": "${DOCUMENT_LAST_UPDATED_DATE}",
+                    "sha512": "${DOCUMENT_SHA512}",
+                    "thumbnailURL": "https://raw.githubusercontent.com/kkk669/coreml-playground/${TAG_NAME}/images/thumbnail.png",
+                    "bannerImageURL": "https://raw.githubusercontent.com/kkk669/coreml-playground/${TAG_NAME}/images/banner.png",
+                    "previewImageURLs": [
+                        "https://raw.githubusercontent.com/kkk669/coreml-playground/${TAG_NAME}/images/preview.png"
+                    ],
+                    "additionalInformation": [
+                        {
+                            "name": "Languages",
+                            "value": "English"
+                        }
+                    ]
+                }
+            ]
+        }
+        EOF
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@2.0.3
+      env:
+        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        BASE_BRANCH: master
+        BRANCH: gh-pages
+        FOLDER: public
+        BUILD_SCRIPT: mkdir public && mv CoreML.playgroundbook.zip feed.json public/
