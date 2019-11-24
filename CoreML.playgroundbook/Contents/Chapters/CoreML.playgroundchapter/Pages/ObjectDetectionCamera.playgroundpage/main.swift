@@ -3,6 +3,7 @@ import UIKit
 import AVFoundation
 import PlaygroundSupport
 import PreviewViewController
+import VideoCapture
 
 // Parameters
 let threshold: Float = 0.3
@@ -34,6 +35,28 @@ class ViewController: PreviewViewController {
         NSLayoutConstraint.activate([
             self.fpsLabel.bottomAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.bottomAnchor),
         ])
+
+        self.cap
+            .compactMap(CMSampleBufferGetImageBuffer)
+            .sink(receiveValue: self.detect)
+            .store(in: &self.cancellables)
+
+        self.cap
+            .compactMap(CMSampleBufferGetImageBuffer)
+            .map(CVImageBufferGetDisplaySize)
+            .map { size -> (CGSize, CGFloat) in
+                let scale = self.view.bounds.size / size
+                return (size, fmin(scale.width, scale.height))
+            }
+            .sink { size, scale in
+                CATransaction.begin()
+                CATransaction.setValue(kCFBooleanTrue, forKey: kCATransactionDisableActions)
+                self.bboxLayer.setAffineTransform(CGAffineTransform(scaleX: scale, y: -scale))
+                self.bboxLayer.bounds = CGRect(origin: .zero, size: size)
+                self.bboxLayer.position = CGPoint(x: self.view.bounds.midX, y: self.view.bounds.midY)
+                CATransaction.commit()
+            }
+            .store(in: &self.cancellables)
     }
     
     override func viewWillLayoutSubviews() {
@@ -94,27 +117,6 @@ class ViewController: PreviewViewController {
             
             CATransaction.commit()
         }
-    }
-    
-    override func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        CATransaction.begin()
-        CATransaction.setValue(kCFBooleanTrue, forKey: kCATransactionDisableActions)
-        
-        super.captureOutput(output, didOutput: sampleBuffer, from: connection)
-        
-        if let size = CMSampleBufferGetImageBuffer(sampleBuffer).map(CVImageBufferGetDisplaySize) {
-            let scaleX = self.view.bounds.width / size.width
-            let scaleY = self.view.bounds.height / size.height
-            let scale = fmin(scaleX, scaleY)
-            
-            self.bboxLayer.setAffineTransform(CGAffineTransform(scaleX: scale, y: -scale))
-            self.bboxLayer.bounds = CGRect(origin: .zero, size: size)
-            self.bboxLayer.position = CGPoint(x: self.view.bounds.midX, y: self.view.bounds.midY)
-        }
-        
-        CATransaction.commit()
-        
-        CMSampleBufferGetImageBuffer(sampleBuffer).map(self.detect)
     }
 }
 

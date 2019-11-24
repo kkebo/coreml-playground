@@ -17,3 +17,12 @@ public extension DispatchTime {
         return Float64(elapsedNano) / 1_000_000_000
     }
 }
+
+extension CGSize {
+    public static func / (_ lhs: Self, _ rhs: Self) -> Self {
+        Self(
+            width: lhs.width / rhs.width,
+            height: lhs.height / rhs.height
+        )
+    }
+}

@@ -1,5 +1,6 @@
 import UIKit
 import AVFoundation
+import Combine
 import PlaygroundSupport
 import VideoCapture
 
@@ -57,22 +58,9 @@ open class PreviewViewController: UIViewController {
         return button
     }()
     
-    lazy var caps: [VideoCaptureDevice] = [
-        {
-            let cap = try! VideoCaptureDevice(preset: .photo, position: .back, mirrored: false)
-            cap.setDelegate(self)
-            return cap
-        }(),
-        {
-            let cap = try! VideoCaptureDevice(preset: .photo, position: .front, mirrored: true)
-            cap.setDelegate(self)
-            return cap
-        }(),
-    ]
-    var capId = 0
-    var cap: VideoCaptureDevice {
-        return self.caps[self.capId]
-    }
+    public var cap = try! VideoCaptureDevice(preset: .photo, position: .back, mirrored: false)
+
+    public var cancellables = Set<AnyCancellable>()
     
     override open func viewDidLoad() {
         super.viewDidLoad()
@@ -86,7 +74,9 @@ open class PreviewViewController: UIViewController {
             self.flipCameraButton.rightAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.rightAnchor),
         ])
         
-        self.cap.start()
+        self.cap
+            .sink(receiveValue: self.previewLayer.enqueue)
+            .store(in: &self.cancellables)
     }
     
     override open func viewWillLayoutSubviews() {
@@ -111,16 +101,15 @@ open class PreviewViewController: UIViewController {
     
     @objc func flipCamera(_ sender: UIButton) {
         UIView.transition(with: self.view, duration: 0.4, options: .transitionFlipFromLeft, animations: {
-            self.cap.stop()
-            self.capId = self.capId == 0 ? 1 : 0
-            self.cap.start()
+            if self.cap.position == .back {
+                self.cap.position = .front
+                self.cap.mirrored = true
+            } else {
+                self.cap.position = .back
+                self.cap.mirrored = false
+            }
+            self.rotateCamera(self.segmentedControl)
         })
-    }
-}
-
-extension PreviewViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
-    open func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        self.previewLayer.enqueue(sampleBuffer)
     }
 }
 
