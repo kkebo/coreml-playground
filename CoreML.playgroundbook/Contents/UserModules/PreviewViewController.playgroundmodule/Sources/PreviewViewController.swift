@@ -8,19 +8,19 @@ open class PreviewViewController: UIViewController {
     let previewLayer = AVSampleBufferDisplayLayer()
     lazy var previewView: UIView = {
         let view = UIView()
-        
+
         view.layer.addSublayer(self.previewLayer)
-        
+
         view.addSubview(self.segmentedControl)
         view.addSubview(self.flipCameraButton)
-        
+
         return view
     }()
     lazy var segmentedControl: UISegmentedControl = {
         let control = UISegmentedControl(items: ["portrait", "portraitUpsideDown", "landscapeRight", "landscapeLeft"])
         control.selectedSegmentIndex = 3
         control.addTarget(self, action: #selector(self.rotateCamera), for: .valueChanged)
-        
+
         control.translatesAutoresizingMaskIntoConstraints = false
         control.backgroundColor = .clear
         control.tintColor = .clear
@@ -38,7 +38,7 @@ open class PreviewViewController: UIViewController {
             ],
             for: .selected
         )
-        
+
         return control
     }()
     lazy var flipCameraButton: UIButton = {
@@ -57,33 +57,33 @@ open class PreviewViewController: UIViewController {
         )
         return button
     }()
-    
+
     public var cap = try! VideoCaptureDevice(preset: .photo, position: .back, mirrored: false)
 
     public var cancellables = Set<AnyCancellable>()
-    
+
     override open func viewDidLoad() {
         super.viewDidLoad()
-        
+
         self.view = self.previewView
-        
+
         NSLayoutConstraint.activate([
             self.segmentedControl.topAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.topAnchor),
             self.segmentedControl.centerXAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.centerXAnchor),
             self.flipCameraButton.bottomAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.bottomAnchor),
             self.flipCameraButton.rightAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.rightAnchor),
         ])
-        
+
         self.cap
             .sink(receiveValue: self.previewLayer.enqueue)
             .store(in: &self.cancellables)
     }
-    
+
     override open func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         self.previewLayer.frame = self.view.bounds
     }
-    
+
     @objc func rotateCamera(_ sender: UISegmentedControl) {
         switch sender.selectedSegmentIndex {
         case 0:
@@ -98,7 +98,7 @@ open class PreviewViewController: UIViewController {
             break
         }
     }
-    
+
     @objc func flipCamera(_ sender: UIButton) {
         UIView.transition(with: self.view, duration: 0.4, options: .transitionFlipFromLeft, animations: {
             if self.cap.position == .back {
