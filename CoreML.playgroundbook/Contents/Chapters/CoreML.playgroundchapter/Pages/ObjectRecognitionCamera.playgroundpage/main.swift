@@ -44,6 +44,11 @@ class ViewController: PreviewViewController {
             self.classesLabel.trailingAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.trailingAnchor),
             self.fpsLabel.bottomAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.bottomAnchor),
         ])
+
+        self.cap
+            .compactMap(CMSampleBufferGetImageBuffer)
+            .sink(receiveValue: self.detect)
+            .store(in: &self.cancellables)
     }
     
     func detect(imageBuffer: CVImageBuffer) {
@@ -73,11 +78,6 @@ class ViewController: PreviewViewController {
                     }
                 }
         }
-    }
-
-    override func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        super.captureOutput(output, didOutput: sampleBuffer, from: connection)
-        CMSampleBufferGetImageBuffer(sampleBuffer).map(self.detect)
     }
 }
 
