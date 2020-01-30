@@ -13,7 +13,6 @@
     <key>UserModuleSourceFilesToOpen</key>
     <array>
         <string>UserModules/PreviewViewController.playgroundmodule/Sources/PreviewViewController.swift</string>
-        <string>UserModules/VideoCapture.playgroundmodule/Sources/VideoCaptureDevice.swift</string>
     </array>
 </dict>
 </plist>
