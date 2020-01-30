@@ -6,7 +6,15 @@ import PreviewViewController
 import VideoCapture
 
 // Parameters
-let threshold: Float = 0.3
+// The model is from here: https://docs-assets.developer.apple.com/coreml/models/Image/ObjectDetection/YOLOv3Tiny/YOLOv3TinyInt8LUT.mlmodel
+let config = MLModelConfiguration()
+config.allowLowPrecisionAccumulationOnGPU = true
+config.computeUnits = .all
+let model = try compileModel(at: #fileLiteral(resourceName: "YOLOv3TinyInt8LUT.mlmodel"), configuration: config)
+model.featureProvider = try MLDictionaryFeatureProvider(dictionary: [
+    "iouThreshold": 0.5,
+    "confidenceThreshold": 0.3,
+])
 
 // ViewControllers
 class ViewController: PreviewViewController {
@@ -19,9 +27,8 @@ class ViewController: PreviewViewController {
     }()
     let bboxLayer = CALayer()
 
-    let model = try! compileModel(at: #fileLiteral(resourceName: "MobileNetV2_SSDLite.mlmodel"))
     lazy var request: VNCoreMLRequest = {
-        let request = VNCoreMLRequest(model: self.model, completionHandler: self.processDetections)
+        let request = VNCoreMLRequest(model: model, completionHandler: self.processDetections)
         request.imageCropAndScaleOption = .scaleFill
         return request
     }()
@@ -86,7 +93,6 @@ class ViewController: PreviewViewController {
             request.results?
                 .lazy
                 .compactMap { $0 as? VNRecognizedObjectObservation }
-                .filter { $0.labels[0].confidence >= threshold }
                 .forEach {
                     print($0.labels[0])
 
