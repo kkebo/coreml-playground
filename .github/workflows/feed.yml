@@ -69,11 +69,10 @@ jobs:
             ]
         }
         EOF
+        mkdir public && mv CoreML.playgroundbook.zip feed.json public/
     - name: Deploy to GitHub Pages
-      uses: JamesIves/github-pages-deploy-action@2.0.3
+      uses: JamesIves/github-pages-deploy-action@releases/v3
       env:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        BASE_BRANCH: master
         BRANCH: gh-pages
         FOLDER: public
-        BUILD_SCRIPT: mkdir public && mv CoreML.playgroundbook.zip feed.json public/
