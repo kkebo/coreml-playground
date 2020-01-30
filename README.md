@@ -17,8 +17,6 @@ CoreML examples for Swift Playgrounds 3.1 on iPadOS 13.1 or later
 
 ### Chapter 1: Object Recognition
 
-There are two examples, `image` and `camera`. You must follow the instructions below before the first running.
-
 1. Download [`MobileNetV2Int8LUT.mlmodel`](https://docs-assets.developer.apple.com/coreml/models/Image/ImageClassification/MobileNetV2/MobileNetV2Int8LUT.mlmodel) from [the Apple Developer website](https://developer.apple.com/machine-learning/models/) and save it into Files app
 1. Open `CoreML.playgroundbook` in Swift Playgrounds on your iPad
 1. Tap the '+' button on the right side of the navigation bar
@@ -27,8 +25,6 @@ There are two examples, `image` and `camera`. You must follow the instructions b
 1. Run the code
 
 ### Chapter 2: Object Detection
-
-There is currently only one example and it is unfinished. You must follow the instructions below before the first running.
 
 1. Download [`YOLOv3TinyInt8LUT.mlmodel`](https://docs-assets.developer.apple.com/coreml/models/Image/ObjectDetection/YOLOv3Tiny/YOLOv3TinyInt8LUT.mlmodel) from [the Apple Developer website](https://developer.apple.com/machine-learning/models/) and save it into Files app
 1. Open `CoreML.playgroundbook` in Swift Playgrounds on your iPad
