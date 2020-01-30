@@ -1,0 +1,32 @@
+{
+    "title": "Core ML Playground Book",
+    "subtitle": "Machine Learning Examples",
+    "publisherName": "Kenta Kubo",
+    "feedIdentifier": "xyz.kebo.playgroundbook.coreml",
+    "contactURL": "https://kebo.xyz",
+    "formatVersion": "1.2",
+    "documents": [
+        {
+            "title": "CoreML",
+            "overviewSubtitle": "Machine Learning Examples",
+            "description": "Machine Learning Examples",
+            "contentIdentifier": "xyz.kebo.playgroundbook.coreml.coreml",
+            "contentVersion": "1.4.0",
+            "url": "https://kebo.xyz/coreml-playground/CoreML.playgroundbook.zip",
+            "publishedDate": "2019-05-06T02:40:00+0900",
+            "lastUpdatedDate": "2020-01-30T14:36:50+00:00",
+            "sha512": "",
+            "thumbnailURL": "https://raw.githubusercontent.com/kkk669/coreml-playground/v1.4.0/images/thumbnail.png",
+            "bannerImageURL": "https://raw.githubusercontent.com/kkk669/coreml-playground/v1.4.0/images/banner.png",
+            "previewImageURLs": [
+                "https://raw.githubusercontent.com/kkk669/coreml-playground/v1.4.0/images/preview.png"
+            ],
+            "additionalInformation": [
+                {
+                    "name": "Languages",
+                    "value": "English"
+                }
+            ]
+        }
+    ]
+}
