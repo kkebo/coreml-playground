@@ -72,7 +72,7 @@ jobs:
         mkdir public && mv CoreML.playgroundbook.zip feed.json public/
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@releases/v3
-      env:
+      with:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         BRANCH: gh-pages
         FOLDER: public
