@@ -5,6 +5,8 @@ import PlaygroundSupport
 import PreviewViewController
 
 // Parameters
+// The model is from here: https://docs-assets.developer.apple.com/coreml/models/Image/ImageClassification/MobileNetV2/MobileNetV2Int8LUT.mlmodel
+let model = try! compileModel(at: #fileLiteral(resourceName: "MobileNetV2Int8LUT.mlmodel"))
 let threshold: Float = 0.5
 
 // ViewControllers
@@ -25,9 +27,8 @@ class ViewController: PreviewViewController {
         return label
     }()
 
-    let model = try! compileModel(at: #fileLiteral(resourceName: "MobileNet.mlmodel"))
     lazy var request: VNCoreMLRequest = {
-        let request = VNCoreMLRequest(model: self.model, completionHandler: self.processClassifications)
+        let request = VNCoreMLRequest(model: model, completionHandler: self.processClassifications)
         request.imageCropAndScaleOption = .scaleFill
         return request
     }()

@@ -3,6 +3,8 @@ import UIKit
 import PlaygroundSupport
 
 // Parameters
+// The model is from here: https://docs-assets.developer.apple.com/coreml/models/Image/ImageClassification/MobileNetV2/MobileNetV2Int8LUT.mlmodel
+let model = try compileModel(at: #fileLiteral(resourceName: "MobileNetV2Int8LUT.mlmodel"))
 let uiImage = #imageLiteral(resourceName: "IMG_0032.JPG")
 let threshold: Float = 0.5
 
@@ -14,7 +16,6 @@ stackView.axis = .vertical
 PlaygroundPage.current.liveView = stackView
 
 // Object Recognition
-let model = try compileModel(at: #fileLiteral(resourceName: "MobileNet.mlmodel"))
 let request = VNCoreMLRequest(model: model) { request, error in
     request.results?
         .lazy
