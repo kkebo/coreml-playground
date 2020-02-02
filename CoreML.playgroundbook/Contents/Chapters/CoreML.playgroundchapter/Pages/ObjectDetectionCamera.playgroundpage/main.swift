@@ -94,8 +94,6 @@ class ViewController: PreviewViewController {
                 .lazy
                 .compactMap { $0 as? VNRecognizedObjectObservation }
                 .forEach {
-                    print($0.labels[0])
-
                     let imgSize = self.bboxLayer.bounds.size;
                     let bbox = VNImageRectForNormalizedRect($0.boundingBox, Int(imgSize.width), Int(imgSize.height))
                     let cls = $0.labels[0]
