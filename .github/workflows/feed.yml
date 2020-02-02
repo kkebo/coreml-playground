@@ -76,7 +76,7 @@ jobs:
             ]
         }
         EOF
-        mkdir public && mv ${PLAYGROUNDBOOK_FILENAME}.zip feed.json public/
+        mkdir public && mv "${PLAYGROUNDBOOK_FILENAME}.zip" feed.json public/
 
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@releases/v3
