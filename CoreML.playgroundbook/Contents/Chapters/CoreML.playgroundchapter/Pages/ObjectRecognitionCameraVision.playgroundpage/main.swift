@@ -1,22 +1,13 @@
 import Vision
 import UIKit
 import AVFoundation
-import VideoToolbox
 import PlaygroundSupport
 import PreviewViewController
 
 // Parameters
 // The model is from here: https://docs-assets.developer.apple.com/coreml/models/Image/ImageClassification/MobileNetV2/MobileNetV2Int8LUT.mlmodel
-let model = try MLModel(contentsOf: try MLModel.compileModel(at: #fileLiteral(resourceName: "MobileNetV2Int8LUT.mlmodel")))
-let inputName = "image"
-let outputName = "classLabelProbs"
+let model = try! compileModel(at: #fileLiteral(resourceName: "MobileNetV2Int8LUT.mlmodel"))
 let threshold: Float = 0.5
-let imageConstraint = model.modelDescription
-    .inputDescriptionsByName[inputName]!
-    .imageConstraint!
-let imageOptions: [MLFeatureValue.ImageOption: Any] = [
-    .cropAndScale: VNImageCropAndScaleOption.scaleFill.rawValue
-]
 
 // ViewControllers
 class ViewController: PreviewViewController {
@@ -34,6 +25,12 @@ class ViewController: PreviewViewController {
         label.backgroundColor = #colorLiteral(red: 0.258823543787003, green: 0.756862759590149, blue: 0.968627452850342, alpha: 0.5)
         label.text = "Nothing is detected."
         return label
+    }()
+
+    lazy var request: VNCoreMLRequest = {
+        let request = VNCoreMLRequest(model: model, completionHandler: self.processClassifications)
+        request.imageCropAndScaleOption = .scaleFill
+        return request
     }()
 
     override func viewDidLoad() {
@@ -56,31 +53,32 @@ class ViewController: PreviewViewController {
     }
 
     func detect(imageBuffer: CVImageBuffer) {
-        let featureValue: MLFeatureValue = {
-            var cgImage: CGImage!
-            VTCreateCGImageFromCVPixelBuffer(imageBuffer, options: nil, imageOut: &cgImage)
-            return try! MLFeatureValue(cgImage: cgImage, constraint: imageConstraint, options: imageOptions)
-        }()
-        let featureProvider = try! MLDictionaryFeatureProvider(dictionary: [inputName: featureValue])
+        let handler = VNImageRequestHandler(cvPixelBuffer: imageBuffer)
 
         let start = DispatchTime.now()
-        let result = try! model.prediction(from: featureProvider)
+        try! handler.perform([self.request])
         let fps = 1 / DispatchTime.now().durationSec(since: start)
         DispatchQueue.main.async {
             self.fpsLabel.text = "fps: \(fps)"
+        }
+    }
+
+    func processClassifications(for request: VNRequest, error: Error?) {
+        DispatchQueue.main.async {
             self.classesLabel.text = ""
         }
 
-        result.featureValue(for: outputName)?
-            .dictionaryValue
-            .lazy
-            .filter { $0.1.floatValue >= threshold }
-            .sorted { $0.1.floatValue > $1.1.floatValue }
-            .forEach { name, confidence in
-                DispatchQueue.main.async {
-                    self.classesLabel.text?.append("\(name): \(confidence)\n")
+        DispatchQueue.global().async {
+            request.results?
+                .lazy
+                .compactMap { $0 as? VNClassificationObservation }
+                .filter { $0.confidence >= threshold }
+                .forEach { cls in
+                    DispatchQueue.main.async {
+                        self.classesLabel.text?.append("\(cls.identifier): \(cls.confidence)\n")
+                    }
                 }
-            }
+        }
     }
 }
 
