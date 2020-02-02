@@ -7,7 +7,10 @@ import PreviewViewController
 
 // Parameters
 // The model is from here: https://docs-assets.developer.apple.com/coreml/models/Image/ImageClassification/MobileNetV2/MobileNetV2Int8LUT.mlmodel
-let model = try MLModel(contentsOf: try MLModel.compileModel(at: #fileLiteral(resourceName: "MobileNetV2Int8LUT.mlmodel")))
+let config = MLModelConfiguration()
+config.allowLowPrecisionAccumulationOnGPU = true
+config.computeUnits = .all
+let model = try MLModel(contentsOf: try MLModel.compileModel(at: #fileLiteral(resourceName: "MobileNetV2Int8LUT.mlmodel")), configuration: config)
 let inputName = "image"
 let outputName = "classLabelProbs"
 let threshold: Float = 0.5
