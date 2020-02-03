@@ -13,6 +13,7 @@
         <string>ObjectRecognitionCamera.playgroundpage</string>
         <string>ObjectRecognitionCameraVision.playgroundpage</string>
         <string>ObjectDetectionCamera.playgroundpage</string>
+        <string>ObjectDetectionCameraVision.playgroundpage</string>
     </array>
 </dict>
 </plist>
