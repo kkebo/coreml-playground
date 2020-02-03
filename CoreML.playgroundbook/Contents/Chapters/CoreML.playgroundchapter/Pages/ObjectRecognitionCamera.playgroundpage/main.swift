@@ -54,23 +54,32 @@ class ViewController: PreviewViewController {
 
         self.cap
             .compactMap(CMSampleBufferGetImageBuffer)
-            .sink(receiveValue: self.detect)
+            .tryMap { imageBuffer in
+                var cgImage: CGImage!
+                VTCreateCGImageFromCVPixelBuffer(imageBuffer, options: nil, imageOut: &cgImage)
+                return try MLFeatureValue(cgImage: cgImage, constraint: imageConstraint, options: imageOptions)
+            }
+            .tryMap {
+                try MLDictionaryFeatureProvider(dictionary: [inputName: $0])
+            }
+            .mapError { _ in fatalError() }
+            .map(self.detect)
+            .sink(receiveValue: self.drawResult)
             .store(in: &self.cancellables)
     }
 
-    func detect(imageBuffer: CVImageBuffer) {
-        let featureValue: MLFeatureValue = {
-            var cgImage: CGImage!
-            VTCreateCGImageFromCVPixelBuffer(imageBuffer, options: nil, imageOut: &cgImage)
-            return try! MLFeatureValue(cgImage: cgImage, constraint: imageConstraint, options: imageOptions)
-        }()
-        let featureProvider = try! MLDictionaryFeatureProvider(dictionary: [inputName: featureValue])
-
+    func detect(input: MLFeatureProvider) -> MLFeatureProvider {
         let start = Date()
-        let result = try! model.prediction(from: featureProvider)
+        let result = try! model.prediction(from: input)
         let fps = 1 / Date().timeIntervalSince(start)
         DispatchQueue.main.async {
             self.fpsLabel.text = "fps: \(fps)"
+        }
+        return result
+    }
+
+    func drawResult(result: MLFeatureProvider) {
+        DispatchQueue.main.async {
             self.classesLabel.text = ""
         }
 
