@@ -89,9 +89,9 @@ class ViewController: PreviewViewController {
     }
 
     func detect(input: MLFeatureProvider) -> MLFeatureProvider {
-        let start = DispatchTime.now()
+        let start = Date()
         let result = try! model.prediction(from: input)
-        let fps = 1 / DispatchTime.now().durationSec(since: start)
+        let fps = 1 / Date().timeIntervalSince(start)
         DispatchQueue.main.async {
             self.fpsLabel.text = "fps: \(fps)"
         }

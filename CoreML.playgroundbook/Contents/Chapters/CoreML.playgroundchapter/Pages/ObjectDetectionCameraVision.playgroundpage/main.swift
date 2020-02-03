@@ -74,9 +74,9 @@ class ViewController: PreviewViewController {
     func detect(imageBuffer: CVImageBuffer) {
         let handler = VNImageRequestHandler(cvPixelBuffer: imageBuffer)
 
-        let start = DispatchTime.now()
+        let start = Date()
         try! handler.perform([self.request])
-        let fps = 1 / DispatchTime.now().durationSec(since: start)
+        let fps = 1 / Date().timeIntervalSince(start)
         DispatchQueue.main.async {
             self.fpsLabel.text = "fps: \(fps)"
         }
