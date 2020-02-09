@@ -33,11 +33,9 @@ jobs:
         DOCUMENT_OVERVIEW_SUBTITLE: Machine Learning Examples
         DOCUMENT_DESCRIPTION: Machine Learning Examples
         DOCUMENT_CONTENT_IDENTIFIER: xyz.kebo.playgroundbook.coreml.coreml
-        DOCUMENT_URL: https://kebo.xyz/coreml-playground/CoreML.playgroundbook.zip
         PLAYGROUNDBOOK_FILENAME: CoreML.playgroundbook
       run: |
         zip -r "${PLAYGROUNDBOOK_FILENAME}.zip" "${PLAYGROUNDBOOK_FILENAME}"
-        DOCUMENT_SHA512=$(sha512sum "${PLAYGROUNDBOOK_FILENAME}.zip" | awk '{print $1}')
         DOCUMENT_PUBLISHED_DATE=2019-05-06T02:40:00+0900
         DOCUMENT_LAST_UPDATED_DATE=$(date -Iseconds)
         TAG_NAME=$(echo $GITHUB_REF | sed -e 's/refs\/tags\///g')
@@ -57,10 +55,9 @@ jobs:
                     "description": "${DOCUMENT_DESCRIPTION}",
                     "contentIdentifier": "${DOCUMENT_CONTENT_IDENTIFIER}",
                     "contentVersion": "${DOCUMENT_CONTENT_VERSION}",
-                    "url": "${DOCUMENT_URL}",
+                    "url": "${PLAYGROUNDBOOK_FILENAME}.zip",
                     "publishedDate": "${DOCUMENT_PUBLISHED_DATE}",
                     "lastUpdatedDate": "${DOCUMENT_LAST_UPDATED_DATE}",
-                    "sha512": "${DOCUMENT_SHA512}",
                     "thumbnailURL": "https://raw.githubusercontent.com/kkk669/coreml-playground/${TAG_NAME}/images/thumbnail.png",
                     "bannerImageURL": "https://raw.githubusercontent.com/kkk669/coreml-playground/${TAG_NAME}/images/banner.png",
                     "previewImageURLs": [
