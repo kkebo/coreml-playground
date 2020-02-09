@@ -33,6 +33,7 @@ jobs:
         DOCUMENT_OVERVIEW_SUBTITLE: Machine Learning Examples
         DOCUMENT_DESCRIPTION: Machine Learning Examples
         DOCUMENT_CONTENT_IDENTIFIER: xyz.kebo.playgroundbook.coreml.coreml
+        DOCUMENT_URL: https://kebo.xyz/coreml-playground/CoreML.playgroundbook.zip
         PLAYGROUNDBOOK_FILENAME: CoreML.playgroundbook
       run: |
         zip -r "${PLAYGROUNDBOOK_FILENAME}.zip" "${PLAYGROUNDBOOK_FILENAME}"
@@ -55,7 +56,7 @@ jobs:
                     "description": "${DOCUMENT_DESCRIPTION}",
                     "contentIdentifier": "${DOCUMENT_CONTENT_IDENTIFIER}",
                     "contentVersion": "${DOCUMENT_CONTENT_VERSION}",
-                    "url": "${PLAYGROUNDBOOK_FILENAME}.zip",
+                    "url": "${DOCUMENT_URL}",
                     "publishedDate": "${DOCUMENT_PUBLISHED_DATE}",
                     "lastUpdatedDate": "${DOCUMENT_LAST_UPDATED_DATE}",
                     "thumbnailURL": "https://raw.githubusercontent.com/kkk669/coreml-playground/${TAG_NAME}/images/thumbnail.png",
