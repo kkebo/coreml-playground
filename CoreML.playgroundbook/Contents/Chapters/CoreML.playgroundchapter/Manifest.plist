@@ -12,8 +12,10 @@
         <string>ObjectRecognitionImageVision.playgroundpage</string>
         <string>ObjectRecognitionCamera.playgroundpage</string>
         <string>ObjectRecognitionCameraVision.playgroundpage</string>
+        <string>ObjectRecognitionCameraARView.playgroundpage</string>
         <string>ObjectDetectionCamera.playgroundpage</string>
         <string>ObjectDetectionCameraVision.playgroundpage</string>
+        <string>ObjectDetectionCameraARView.playgroundpage</string>
     </array>
 </dict>
 </plist>
