@@ -10,5 +10,7 @@
     <string>VisibleByDefault</string>
     <key>PlaygroundLoggingMode</key>
     <string>Off</string>
+    <key>UserModuleSourceFilesToOpen</key>
+    <array></array>
 </dict>
 </plist>
