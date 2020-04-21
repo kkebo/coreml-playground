@@ -1,9 +1,7 @@
-import Vision
-import UIKit
-import AVFoundation
+import ARKit
 import PlaygroundSupport
-import PreviewViewController
-import VideoCapture
+import UIKit
+import Vision
 
 // Parameters
 // The model is from here: https://docs-assets.developer.apple.com/coreml/models/Image/ObjectDetection/YOLOv3Tiny/YOLOv3TinyInt8LUT.mlmodel
@@ -36,34 +34,14 @@ class ViewController: PreviewViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.arView.session.delegate = self
+
         self.view.layer.addSublayer(self.bboxLayer)
         self.view.addSubview(self.fpsLabel)
 
         NSLayoutConstraint.activate([
             self.fpsLabel.bottomAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.bottomAnchor),
         ])
-
-        self.cap
-            .compactMap(CMSampleBufferGetImageBuffer)
-            .sink(receiveValue: self.detect)
-            .store(in: &self.cancellables)
-
-        self.cap
-            .compactMap(CMSampleBufferGetImageBuffer)
-            .map(CVImageBufferGetDisplaySize)
-            .map { size -> (CGSize, CGFloat) in
-                let scale = self.view.bounds.size / size
-                return (size, fmin(scale.width, scale.height))
-            }
-            .sink { size, scale in
-                CATransaction.begin()
-                CATransaction.setValue(kCFBooleanTrue, forKey: kCATransactionDisableActions)
-                self.bboxLayer.setAffineTransform(CGAffineTransform(scaleX: scale, y: -scale))
-                self.bboxLayer.bounds = CGRect(origin: .zero, size: size)
-                self.bboxLayer.position = CGPoint(x: self.view.bounds.midX, y: self.view.bounds.midY)
-                CATransaction.commit()
-            }
-            .store(in: &self.cancellables)
     }
 
     override func viewWillLayoutSubviews() {
@@ -121,6 +99,24 @@ class ViewController: PreviewViewController {
 
             CATransaction.commit()
         }
+    }
+}
+
+extension ViewController: ARSessionDelegate {
+    func session(_ session: ARSession, didUpdate frame: ARFrame) {
+        let imageBuffer = frame.capturedImage
+
+        let size = CVImageBufferGetDisplaySize(imageBuffer)
+        let scale = self.view.bounds.size / size
+        let maxScale = fmax(scale.width, scale.height)
+        CATransaction.begin()
+        CATransaction.setValue(kCFBooleanTrue, forKey: kCATransactionDisableActions)
+        self.bboxLayer.setAffineTransform(CGAffineTransform(scaleX: maxScale, y: -maxScale))
+        self.bboxLayer.bounds = CGRect(origin: .zero, size: size)
+        self.bboxLayer.position = CGPoint(x: self.view.bounds.midX, y: self.view.bounds.midY)
+        CATransaction.commit()
+
+        self.detect(imageBuffer: imageBuffer)
     }
 }
 

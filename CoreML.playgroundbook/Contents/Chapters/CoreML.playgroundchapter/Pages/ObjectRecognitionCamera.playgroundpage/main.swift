@@ -1,9 +1,8 @@
-import Vision
-import UIKit
-import AVFoundation
-import VideoToolbox
+import ARKit
 import PlaygroundSupport
-import PreviewViewController
+import UIKit
+import VideoToolbox
+import Vision
 
 // Parameters
 // The model is from here: https://docs-assets.developer.apple.com/coreml/models/Image/ImageClassification/MobileNetV2/MobileNetV2Int8LUT.mlmodel
@@ -42,6 +41,8 @@ class ViewController: PreviewViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.arView.session.delegate = self
+
         self.view.addSubview(self.classesLabel)
         self.view.addSubview(self.fpsLabel)
 
@@ -51,21 +52,6 @@ class ViewController: PreviewViewController {
             self.classesLabel.trailingAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.trailingAnchor),
             self.fpsLabel.bottomAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.bottomAnchor),
         ])
-
-        self.cap
-            .compactMap(CMSampleBufferGetImageBuffer)
-            .tryMap { imageBuffer in
-                var cgImage: CGImage!
-                VTCreateCGImageFromCVPixelBuffer(imageBuffer, options: nil, imageOut: &cgImage)
-                return try MLFeatureValue(cgImage: cgImage, constraint: imageConstraint, options: imageOptions)
-            }
-            .tryMap {
-                try MLDictionaryFeatureProvider(dictionary: [inputName: $0])
-            }
-            .mapError { _ in fatalError() }
-            .map(self.detect)
-            .sink(receiveValue: self.drawResult)
-            .store(in: &self.cancellables)
     }
 
     func detect(input: MLFeatureProvider) -> MLFeatureProvider {
@@ -93,6 +79,29 @@ class ViewController: PreviewViewController {
                     self.classesLabel.text?.append("\(name): \(confidence)\n")
                 }
             }
+    }
+}
+
+extension ViewController: ARSessionDelegate {
+    func session(_ session: ARSession, didUpdate frame: ARFrame) {
+        let imageBuffer = frame.capturedImage
+
+        let size = CVImageBufferGetDisplaySize(imageBuffer)
+        let scale = self.view.bounds.size / size
+        let maxScale = fmax(scale.width, scale.height)
+        CATransaction.begin()
+        CATransaction.setValue(kCFBooleanTrue, forKey: kCATransactionDisableActions)
+        self.bboxLayer.setAffineTransform(CGAffineTransform(scaleX: maxScale, y: -maxScale))
+        self.bboxLayer.bounds = CGRect(origin: .zero, size: size)
+        self.bboxLayer.position = CGPoint(x: self.view.bounds.midX, y: self.view.bounds.midY)
+        CATransaction.commit()
+
+        var cgImage: CGImage!
+        VTCreateCGImageFromCVPixelBuffer(imageBuffer, options: nil, imageOut: &cgImage)
+        let featureValue = try! MLFeatureValue(cgImage: cgImage, constraint: imageConstraint, options: imageOptions)
+        let input = try! MLDictionaryFeatureProvider(dictionary: [inputName: featureValue])
+        let output = self.detect(input: input)
+        self.drawResult(result: output)
     }
 }
 

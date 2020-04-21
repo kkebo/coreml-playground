@@ -1,8 +1,7 @@
-import Vision
-import UIKit
-import AVFoundation
+import ARKit
 import PlaygroundSupport
-import PreviewViewController
+import UIKit
+import Vision
 
 // Parameters
 // The model is from here: https://docs-assets.developer.apple.com/coreml/models/Image/ImageClassification/MobileNetV2/MobileNetV2Int8LUT.mlmodel
@@ -39,6 +38,8 @@ class ViewController: PreviewViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.arView.session.delegate = self
+
         self.view.addSubview(self.classesLabel)
         self.view.addSubview(self.fpsLabel)
 
@@ -48,11 +49,6 @@ class ViewController: PreviewViewController {
             self.classesLabel.trailingAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.trailingAnchor),
             self.fpsLabel.bottomAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.bottomAnchor),
         ])
-
-        self.cap
-            .compactMap(CMSampleBufferGetImageBuffer)
-            .sink(receiveValue: self.detect)
-            .store(in: &self.cancellables)
     }
 
     func detect(imageBuffer: CVImageBuffer) {
@@ -82,6 +78,12 @@ class ViewController: PreviewViewController {
                     }
                 }
         }
+    }
+}
+
+extension ViewController: ARSessionDelegate {
+    func session(_ session: ARSession, didUpdate frame: ARFrame) {
+        self.detect(imageBuffer: frame.capturedImage)
     }
 }
 
