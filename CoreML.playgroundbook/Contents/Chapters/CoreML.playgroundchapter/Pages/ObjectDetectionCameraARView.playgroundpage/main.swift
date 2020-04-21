@@ -24,6 +24,7 @@ class ViewController: UIViewController {
         view.session.run(AROrientationTrackingConfiguration())
         view.layer.addSublayer(self.bboxLayer)
         view.addSubview(self.fpsLabel)
+        view.addSubview(self.flipCameraButton)
         return view
     }()
     let fpsLabel: UILabel = {
@@ -34,6 +35,23 @@ class ViewController: UIViewController {
         return label
     }()
     let bboxLayer = CALayer()
+    lazy var flipCameraButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(self.flipCamera), for: .touchUpInside)
+        button.setAttributedTitle(
+            NSAttributedString(
+                string: "Flip",
+                attributes: [
+                    NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .headline),
+                    NSAttributedString.Key.foregroundColor: UIColor.orange
+                ]
+            ),
+            for: .normal
+        )
+        return button
+    }()
+    var usingFrontCamera = false
 
     lazy var request: VNCoreMLRequest = {
         let request = VNCoreMLRequest(model: model, completionHandler: self.processDetections)
@@ -48,12 +66,23 @@ class ViewController: UIViewController {
 
         NSLayoutConstraint.activate([
             self.fpsLabel.bottomAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.bottomAnchor),
+            self.flipCameraButton.bottomAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.bottomAnchor),
+            self.flipCameraButton.rightAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.rightAnchor),
         ])
     }
 
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         self.bboxLayer.position = CGPoint(x: self.view.bounds.midX, y: self.view.bounds.midY)
+    }
+
+    @objc func flipCamera(_ sender: UIButton) {
+        UIView.transition(with: self.view, duration: 0.4, options: .transitionFlipFromLeft, animations: {
+            let config = self.usingFrontCamera ? AROrientationTrackingConfiguration() : ARFaceTrackingConfiguration()
+            self.arView.session.run(config)
+
+            self.usingFrontCamera = !self.usingFrontCamera
+        })
     }
 
     func detect(imageBuffer: CVImageBuffer) {
