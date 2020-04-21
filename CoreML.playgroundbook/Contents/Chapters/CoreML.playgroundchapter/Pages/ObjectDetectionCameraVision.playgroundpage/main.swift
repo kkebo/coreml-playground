@@ -16,13 +16,6 @@ model.featureProvider = try MLDictionaryFeatureProvider(dictionary: [
 
 // ViewControllers
 class ViewController: PreviewViewController {
-    let fpsLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.textColor = #colorLiteral(red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0)
-        label.text = "fps: -"
-        return label
-    }()
     let bboxLayer = CALayer()
 
     lazy var request: VNCoreMLRequest = {
@@ -37,11 +30,6 @@ class ViewController: PreviewViewController {
         self.arView.session.delegate = self
 
         self.view.layer.addSublayer(self.bboxLayer)
-        self.view.addSubview(self.fpsLabel)
-
-        NSLayoutConstraint.activate([
-            self.fpsLabel.bottomAnchor.constraint(equalTo: self.liveViewSafeAreaGuide.bottomAnchor),
-        ])
     }
 
     override func viewWillLayoutSubviews() {
@@ -50,14 +38,7 @@ class ViewController: PreviewViewController {
     }
 
     func detect(imageBuffer: CVImageBuffer) {
-        let handler = VNImageRequestHandler(cvPixelBuffer: imageBuffer)
-
-        let start = Date()
-        try! handler.perform([self.request])
-        let fps = 1 / Date().timeIntervalSince(start)
-        DispatchQueue.main.async {
-            self.fpsLabel.text = "fps: \(fps)"
-        }
+        try! VNImageRequestHandler(cvPixelBuffer: imageBuffer).perform([self.request])
     }
 
     func processDetections(for request: VNRequest, error: Error?) {
