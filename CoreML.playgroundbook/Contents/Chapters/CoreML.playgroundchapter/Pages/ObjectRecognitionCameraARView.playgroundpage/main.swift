@@ -15,8 +15,9 @@ let threshold: Float = 0.5
 // ViewControllers
 class ViewController: UIViewController {
     lazy var arView: ARView = {
-        let view = ARView(frame: .zero, cameraMode: .ar, automaticallyConfigureSession: true)
+        let view = ARView(frame: .zero, cameraMode: .ar, automaticallyConfigureSession: false)
         view.session.delegate = self
+        view.session.run(AROrientationTrackingConfiguration())
         view.addSubview(self.classesLabel)
         view.addSubview(self.fpsLabel)
         return view
@@ -94,4 +95,5 @@ extension ViewController: ARSessionDelegate {
 
 extension ViewController: PlaygroundLiveViewSafeAreaContainer {}
 
+PlaygroundPage.current.wantsFullScreenLiveView = true
 PlaygroundPage.current.liveView = ViewController()

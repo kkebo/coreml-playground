@@ -19,8 +19,9 @@ model.featureProvider = try MLDictionaryFeatureProvider(dictionary: [
 // ViewControllers
 class ViewController: UIViewController {
     lazy var arView: ARView = {
-        let view = ARView(frame: .zero, cameraMode: .ar, automaticallyConfigureSession: true)
+        let view = ARView(frame: .zero, cameraMode: .ar, automaticallyConfigureSession: false)
         view.session.delegate = self
+        view.session.run(AROrientationTrackingConfiguration())
         view.layer.addSublayer(self.bboxLayer)
         view.addSubview(self.fpsLabel)
         return view
@@ -128,4 +129,5 @@ extension ViewController: ARSessionDelegate {
 
 extension ViewController: PlaygroundLiveViewSafeAreaContainer {}
 
+PlaygroundPage.current.wantsFullScreenLiveView = true
 PlaygroundPage.current.liveView = ViewController()
