@@ -86,16 +86,6 @@ extension ViewController: ARSessionDelegate {
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
         let imageBuffer = frame.capturedImage
 
-        let size = CVImageBufferGetDisplaySize(imageBuffer)
-        let scale = self.view.bounds.size / size
-        let maxScale = fmax(scale.width, scale.height)
-        CATransaction.begin()
-        CATransaction.setValue(kCFBooleanTrue, forKey: kCATransactionDisableActions)
-        self.bboxLayer.setAffineTransform(CGAffineTransform(scaleX: maxScale, y: -maxScale))
-        self.bboxLayer.bounds = CGRect(origin: .zero, size: size)
-        self.bboxLayer.position = CGPoint(x: self.view.bounds.midX, y: self.view.bounds.midY)
-        CATransaction.commit()
-
         var cgImage: CGImage!
         VTCreateCGImageFromCVPixelBuffer(imageBuffer, options: nil, imageOut: &cgImage)
         let featureValue = try! MLFeatureValue(cgImage: cgImage, constraint: imageConstraint, options: imageOptions)
