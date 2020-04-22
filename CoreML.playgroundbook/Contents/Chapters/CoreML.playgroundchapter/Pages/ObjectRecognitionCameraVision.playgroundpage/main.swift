@@ -47,21 +47,15 @@ class ViewController: PreviewViewController {
     }
 
     func processClassifications(for request: VNRequest, error: Error?) {
-        DispatchQueue.main.async {
-            self.classesLabel.text = ""
-        }
+        self.classesLabel.text = ""
 
-        DispatchQueue.global().async {
-            request.results?
-                .lazy
-                .compactMap { $0 as? VNClassificationObservation }
-                .filter { $0.confidence >= threshold }
-                .forEach { cls in
-                    DispatchQueue.main.async {
-                        self.classesLabel.text?.append("\(cls.identifier): \(cls.confidence)\n")
-                    }
-                }
-        }
+        request.results?
+            .lazy
+            .compactMap { $0 as? VNClassificationObservation }
+            .filter { $0.confidence >= threshold }
+            .forEach { cls in
+                self.classesLabel.text?.append("\(cls.identifier): \(cls.confidence)\n")
+            }
     }
 }
 

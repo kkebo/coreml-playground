@@ -42,44 +42,42 @@ class ViewController: PreviewViewController {
     }
 
     func processDetections(for request: VNRequest, error: Error?) {
-        DispatchQueue.global().async {
-            CATransaction.begin()
-            CATransaction.setValue(kCFBooleanTrue, forKey: kCATransactionDisableActions)
+        CATransaction.begin()
+        CATransaction.setValue(kCFBooleanTrue, forKey: kCATransactionDisableActions)
 
-            // Remove all bboxes
-            self.bboxLayer.sublayers = nil
+        // Remove all bboxes
+        self.bboxLayer.sublayers = nil
 
-            request.results?
-                .lazy
-                .compactMap { $0 as? VNRecognizedObjectObservation }
-                .forEach {
-                    let imgSize = self.bboxLayer.bounds.size;
-                    let bbox = VNImageRectForNormalizedRect($0.boundingBox, Int(imgSize.width), Int(imgSize.height))
-                    let cls = $0.labels[0]
+        request.results?
+            .lazy
+            .compactMap { $0 as? VNRecognizedObjectObservation }
+            .forEach {
+                let imgSize = self.bboxLayer.bounds.size;
+                let bbox = VNImageRectForNormalizedRect($0.boundingBox, Int(imgSize.width), Int(imgSize.height))
+                let cls = $0.labels[0]
 
-                    // Render a bounding box
-                    let shapeLayer = CALayer()
-                    shapeLayer.borderColor = #colorLiteral(red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0)
-                    shapeLayer.borderWidth = 2
-                    shapeLayer.bounds = bbox
-                    shapeLayer.position = CGPoint(x: bbox.midX, y: bbox.midY)
+                // Render a bounding box
+                let shapeLayer = CALayer()
+                shapeLayer.borderColor = #colorLiteral(red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0)
+                shapeLayer.borderWidth = 2
+                shapeLayer.bounds = bbox
+                shapeLayer.position = CGPoint(x: bbox.midX, y: bbox.midY)
 
-                    // Render a description
-                    let textLayer = CATextLayer()
-                    textLayer.string = "\(cls.identifier): \(cls.confidence)"
-                    textLayer.font = UIFont.preferredFont(forTextStyle: .body)
-                    textLayer.bounds = CGRect(x: 0, y: 0, width: bbox.width - 10, height: bbox.height - 10)
-                    textLayer.position = CGPoint(x: bbox.midX, y: bbox.midY)
-                    textLayer.foregroundColor = #colorLiteral(red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0)
-                    textLayer.contentsScale = 2.0 // Retina Display
-                    textLayer.setAffineTransform(CGAffineTransform(scaleX: 1, y: -1))
+                // Render a description
+                let textLayer = CATextLayer()
+                textLayer.string = "\(cls.identifier): \(cls.confidence)"
+                textLayer.font = UIFont.preferredFont(forTextStyle: .body)
+                textLayer.bounds = CGRect(x: 0, y: 0, width: bbox.width - 10, height: bbox.height - 10)
+                textLayer.position = CGPoint(x: bbox.midX, y: bbox.midY)
+                textLayer.foregroundColor = #colorLiteral(red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0)
+                textLayer.contentsScale = 2.0 // Retina Display
+                textLayer.setAffineTransform(CGAffineTransform(scaleX: 1, y: -1))
 
-                    shapeLayer.addSublayer(textLayer)
-                    self.bboxLayer.addSublayer(shapeLayer)
-                }
+                shapeLayer.addSublayer(textLayer)
+                self.bboxLayer.addSublayer(shapeLayer)
+            }
 
-            CATransaction.commit()
-        }
+        CATransaction.commit()
     }
 }
 
