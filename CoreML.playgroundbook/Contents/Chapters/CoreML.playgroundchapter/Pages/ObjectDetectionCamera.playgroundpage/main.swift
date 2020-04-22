@@ -37,6 +37,7 @@ class ViewController: PreviewViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.arView.session.delegateQueue = .global(qos: .userInteractive)
         self.arView.session.delegate = self
 
         self.view.layer.addSublayer(self.bboxLayer)
@@ -139,10 +140,8 @@ extension ViewController: ARSessionDelegate {
             confidenceThresholdName: confidenceThreshold,
         ])
 
-        DispatchQueue.global(qos: .userInteractive).async {
-            let output = self.detect(input: input)
-            self.drawResult(result: output)
-        }
+        let output = self.detect(input:input)
+        self.drawResult(result: output)
     }
 }
 

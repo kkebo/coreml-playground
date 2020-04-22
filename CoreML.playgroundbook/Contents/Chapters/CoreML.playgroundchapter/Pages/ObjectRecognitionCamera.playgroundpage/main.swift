@@ -41,6 +41,7 @@ class ViewController: PreviewViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.arView.session.delegateQueue = .global(qos: .userInteractive)
         self.arView.session.delegate = self
 
         self.view.addSubview(self.classesLabel)
@@ -91,10 +92,8 @@ extension ViewController: ARSessionDelegate {
         let featureValue = try! MLFeatureValue(cgImage: cgImage, constraint: imageConstraint, options: imageOptions)
         let input = try! MLDictionaryFeatureProvider(dictionary: [inputName: featureValue])
 
-        DispatchQueue.global(qos: .userInteractive).async {
-            let output = self.detect(input: input)
-            self.drawResult(result: output)
-        }
+        let output = self.detect(input: input)
+        self.drawResult(result: output)
     }
 }
 
