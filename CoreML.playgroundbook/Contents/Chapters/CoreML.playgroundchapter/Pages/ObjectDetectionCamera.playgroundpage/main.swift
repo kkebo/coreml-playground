@@ -138,8 +138,11 @@ extension ViewController: ARSessionDelegate {
             iouThresholdName: iouThreshold,
             confidenceThresholdName: confidenceThreshold,
         ])
-        let output = self.detect(input: input)
-        self.drawResult(result: output)
+
+        DispatchQueue.global(qos: .userInteractive).async {
+            let output = self.detect(input: input)
+            self.drawResult(result: output)
+        }
     }
 }
 

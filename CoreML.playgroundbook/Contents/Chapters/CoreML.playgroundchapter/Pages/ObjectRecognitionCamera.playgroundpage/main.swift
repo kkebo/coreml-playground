@@ -90,8 +90,11 @@ extension ViewController: ARSessionDelegate {
         VTCreateCGImageFromCVPixelBuffer(imageBuffer, options: nil, imageOut: &cgImage)
         let featureValue = try! MLFeatureValue(cgImage: cgImage, constraint: imageConstraint, options: imageOptions)
         let input = try! MLDictionaryFeatureProvider(dictionary: [inputName: featureValue])
-        let output = self.detect(input: input)
-        self.drawResult(result: output)
+
+        DispatchQueue.global(qos: .userInteractive).async {
+            let output = self.detect(input: input)
+            self.drawResult(result: output)
+        }
     }
 }
 
