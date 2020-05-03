@@ -15,7 +15,7 @@ model.featureProvider = try MLDictionaryFeatureProvider(dictionary: [
 ])
 
 // ViewControllers
-class ViewController: PreviewViewController {
+final class ViewController: PreviewViewController {
     let bboxLayer = CALayer()
 
     lazy var request: VNCoreMLRequest = {
@@ -37,8 +37,9 @@ class ViewController: PreviewViewController {
         self.bboxLayer.position = CGPoint(x: self.view.bounds.midX, y: self.view.bounds.midY)
     }
 
-    func detect(imageBuffer: CVImageBuffer) {
-        try! VNImageRequestHandler(cvPixelBuffer: imageBuffer).perform([self.request])
+    func detect(imageBuffer: CVImageBuffer, orientation: CGImagePropertyOrientation) {
+        try! VNImageRequestHandler(cvPixelBuffer: imageBuffer, orientation: orientation)
+            .perform([self.request])
     }
 
     func processDetections(for request: VNRequest, error: Error?) {
@@ -85,7 +86,12 @@ extension ViewController: ARSessionDelegate {
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
         let imageBuffer = frame.capturedImage
 
-        let size = CVImageBufferGetDisplaySize(imageBuffer)
+        let orientation = CGImagePropertyOrientation(interfaceOrientation: UIScreen.main.orientation)
+
+        var size = CVImageBufferGetDisplaySize(imageBuffer)
+        if orientation == .right || orientation == .left {
+            size = CGSize(width: size.height, height: size.width)
+        }
         let scale = self.view.bounds.size / size
         let maxScale = fmax(scale.width, scale.height)
         CATransaction.begin()
@@ -95,7 +101,7 @@ extension ViewController: ARSessionDelegate {
         self.bboxLayer.position = CGPoint(x: self.view.bounds.midX, y: self.view.bounds.midY)
         CATransaction.commit()
 
-        self.detect(imageBuffer: imageBuffer)
+        self.detect(imageBuffer: imageBuffer, orientation: orientation)
     }
 }
 

@@ -12,7 +12,7 @@ let model = try! compileModel(at: #fileLiteral(resourceName: "MobileNetV2Int8LUT
 let threshold: Float = 0.5
 
 // ViewControllers
-class ViewController: PreviewViewController {
+final class ViewController: PreviewViewController {
     let classesLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -42,8 +42,9 @@ class ViewController: PreviewViewController {
         ])
     }
 
-    func detect(imageBuffer: CVImageBuffer) {
-        try! VNImageRequestHandler(cvPixelBuffer: imageBuffer).perform([self.request])
+    func detect(imageBuffer: CVImageBuffer, orientation: CGImagePropertyOrientation) {
+        try! VNImageRequestHandler(cvPixelBuffer: imageBuffer, orientation: orientation)
+            .perform([self.request])
     }
 
     func processClassifications(for request: VNRequest, error: Error?) {
@@ -61,7 +62,10 @@ class ViewController: PreviewViewController {
 
 extension ViewController: ARSessionDelegate {
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
-        self.detect(imageBuffer: frame.capturedImage)
+        self.detect(
+            imageBuffer: frame.capturedImage,
+            orientation: CGImagePropertyOrientation(interfaceOrientation: UIScreen.main.orientation)
+        )
     }
 }
 

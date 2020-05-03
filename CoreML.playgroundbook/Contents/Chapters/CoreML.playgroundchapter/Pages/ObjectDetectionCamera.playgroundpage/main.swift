@@ -1,7 +1,6 @@
 import ARKit
 import PlaygroundSupport
 import UIKit
-import VideoToolbox
 import Vision
 
 // Parameters
@@ -24,7 +23,7 @@ let imageOptions: [MLFeatureValue.ImageOption: Any] = [
 ]
 
 // ViewControllers
-class ViewController: PreviewViewController {
+final class ViewController: PreviewViewController {
     let fpsLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -121,7 +120,12 @@ extension ViewController: ARSessionDelegate {
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
         let imageBuffer = frame.capturedImage
 
-        let size = CVImageBufferGetDisplaySize(imageBuffer)
+        let orientation = CGImagePropertyOrientation(interfaceOrientation: UIScreen.main.orientation)
+        let ciImage = CIImage(cvPixelBuffer: imageBuffer).oriented(orientation)
+        let context = CIContext(options: [.useSoftwareRenderer: false])
+        let cgImage = context.createCGImage(ciImage, from: ciImage.extent)!
+
+        let size = CGSize(width: cgImage.width, height: cgImage.height)
         let scale = self.view.bounds.size / size
         let maxScale = fmax(scale.width, scale.height)
         CATransaction.begin()
@@ -131,8 +135,8 @@ extension ViewController: ARSessionDelegate {
         self.bboxLayer.position = CGPoint(x: self.view.bounds.midX, y: self.view.bounds.midY)
         CATransaction.commit()
 
-        var cgImage: CGImage!
-        VTCreateCGImageFromCVPixelBuffer(imageBuffer, options: nil, imageOut: &cgImage)
+        // var cgImage: CGImage!
+        // VTCreateCGImageFromCVPixelBuffer(imageBuffer, options: nil, imageOut: &cgImage)
         let featureValue = try! MLFeatureValue(cgImage: cgImage, constraint: imageConstraint, options: imageOptions)
         let input = try! MLDictionaryFeatureProvider(dictionary: [
             inputName: featureValue,

@@ -1,7 +1,6 @@
 import ARKit
 import PlaygroundSupport
 import UIKit
-import VideoToolbox
 import Vision
 
 // Parameters
@@ -21,7 +20,7 @@ let imageOptions: [MLFeatureValue.ImageOption: Any] = [
 ]
 
 // ViewControllers
-class ViewController: PreviewViewController {
+final class ViewController: PreviewViewController {
     let fpsLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -87,8 +86,11 @@ extension ViewController: ARSessionDelegate {
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
         let imageBuffer = frame.capturedImage
 
-        var cgImage: CGImage!
-        VTCreateCGImageFromCVPixelBuffer(imageBuffer, options: nil, imageOut: &cgImage)
+        let orientation = CGImagePropertyOrientation(interfaceOrientation: UIScreen.main.orientation)
+        let ciImage = CIImage(cvPixelBuffer: imageBuffer).oriented(orientation)
+        let context = CIContext(options: [.useSoftwareRenderer: false])
+        let cgImage = context.createCGImage(ciImage, from: ciImage.extent)!
+
         let featureValue = try! MLFeatureValue(cgImage: cgImage, constraint: imageConstraint, options: imageOptions)
         let input = try! MLDictionaryFeatureProvider(dictionary: [inputName: featureValue])
 

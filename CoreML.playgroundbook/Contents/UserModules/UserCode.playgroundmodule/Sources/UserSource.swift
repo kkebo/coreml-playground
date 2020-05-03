@@ -1,6 +1,7 @@
-import Vision
-import CoreML
 import Accelerate
+import CoreML
+import UIKit
+import Vision
 
 public func compileModel(at url: URL) throws -> VNCoreMLModel {
     try compileModel(at: url, configuration: MLModelConfiguration())
@@ -26,6 +27,41 @@ public func argmax(_ array: UnsafePointer<Double>, count: UInt) -> (Int, Double)
     var maxIndex: vDSP_Length = 0
     vDSP_maxviD(array, 1, &maxValue, &maxIndex, vDSP_Length(count))
     return (Int(maxIndex), maxValue)
+}
+
+extension CGImagePropertyOrientation {
+    public init(interfaceOrientation: UIInterfaceOrientation) {
+        switch interfaceOrientation {
+        case .portrait:
+            self = .right
+        case .portraitUpsideDown:
+            self = .left
+        case .landscapeLeft:
+            self = .down
+        case .landscapeRight:
+            self = .up
+        default:
+            self = .right
+        }
+    }
+}
+
+extension UIScreen {
+    public var orientation: UIInterfaceOrientation {
+        let point = self.coordinateSpace.convert(CGPoint.zero, to: self.fixedCoordinateSpace)
+        switch (point.x, point.y) {
+        case (0, 0):
+            return .portrait
+        case let (x, y) where x != 0 && y != 0:
+            return .portraitUpsideDown
+        case let (0, y) where y != 0:
+            return .landscapeLeft
+        case let (x, 0) where x != 0:
+            return .landscapeRight
+        default:
+            return .unknown
+        }
+    }
 }
 
 public let coco_classes = [
