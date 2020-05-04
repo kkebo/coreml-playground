@@ -11,15 +11,14 @@
             "overviewSubtitle": "Machine Learning Examples",
             "description": "Machine Learning Examples",
             "contentIdentifier": "xyz.kebo.playgroundbook.coreml.coreml",
-            "contentVersion": "1.5.0",
+            "contentVersion": "1.6.0",
             "url": "https://kebo.xyz/coreml-playground/CoreML.playgroundbook.zip",
             "publishedDate": "2019-05-06T02:40:00+0900",
-            "lastUpdatedDate": "2020-02-03T17:09:34+00:00",
-            "sha512": "24bcbfd656c41c838e38e2dbfd513ab54c3ad709a47336d4eaf68f68bc789202a773e87d220362a395e7d2af992ac7a429aa4d3fc8e1260bf8a0e82650b149c5",
-            "thumbnailURL": "https://raw.githubusercontent.com/kkk669/coreml-playground/v1.5.0/images/thumbnail.png",
-            "bannerImageURL": "https://raw.githubusercontent.com/kkk669/coreml-playground/v1.5.0/images/banner.png",
+            "lastUpdatedDate": "2020-05-04T13:45:13+00:00",
+            "thumbnailURL": "https://raw.githubusercontent.com/kkk669/coreml-playground/v1.6.0/images/thumbnail.png",
+            "bannerImageURL": "https://raw.githubusercontent.com/kkk669/coreml-playground/v1.6.0/images/banner.png",
             "previewImageURLs": [
-                "https://raw.githubusercontent.com/kkk669/coreml-playground/v1.5.0/images/preview.png"
+                "https://raw.githubusercontent.com/kkk669/coreml-playground/v1.6.0/images/preview.png"
             ],
             "additionalInformation": [
                 {
