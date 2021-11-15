@@ -2,7 +2,7 @@
 
 # coreml-playground
 
-[![Swift](https://img.shields.io/badge/Swift-5.1-orange.svg)](https://developer.apple.com/swift/)
+[![Swift](https://img.shields.io/badge/Swift-5.1-orange.svg)](https://www.swift.org)
 [![Swift Playgrounds](https://img.shields.io/badge/Swift%20Playgrounds-3.1-orange.svg)](https://itunes.apple.com/jp/app/swift-playgrounds/id908519492)
 ![Platform](https://img.shields.io/badge/platform-ipados-lightgrey.svg)
 [![License](https://img.shields.io/github/license/kkk669/coreml-playground.svg)](LICENSE)
